@@ -13,7 +13,12 @@ Run `rustup update stable` to update to the latest version of Rust!
 * [Evcxr] - A REPL and Jupyter kernel for Rust.
 * [web-sys] - Raw bindings to all web APIs! Is also future-compatible with upcoming Web
   Assembly changes that will "eventually unlock even-faster-than-JS DOM performance".
-* [Bluetooth Low Energy with Rust] - Article discussing some new crates for doing BLE in Rust.
+* [Bluetooth Low Energy with Rust] - Article announcing some new crates for doing BLE in Rust.
+* [GLSL quasiquoting in Rust!] - Support for using quasiquoting to write GLSL shaders added
+  to the [glsl] crate.
+* [Introducing Ruukh Framework] - WebAssebly-first front-end framework for Rust inspired by
+  [VueJS] and [ReactJS].
+
 
 ## Blog Posts and Articles
 
@@ -26,6 +31,8 @@ Run `rustup update stable` to update to the latest version of Rust!
   upcoming changes in Firefox will drastically improve the speed of calling between JS and WASM.
 * [Continued progress porting Emacs to Rust] - Progress update on the [Remacs] project, which is
   an effort to port the core of Emacs to Rust.
+* [Declarative Rust static analysis] - Interactive explanation of [comacro], an experimental tool
+  for building things like clippy lints and other static analysis for Rust.
 
 ## Talks and Videos
 
@@ -47,3 +54,10 @@ Run `rustup update stable` to update to the latest version of Rust!
 [Rust 1.29.2]: https://blog.rust-lang.org/2018/10/12/Rust-1.29.2.html
 [Continued progress porting Emacs to Rust]: http://db48x.net/rust-remacs-2018/
 [Remacs]: https://github.com/wilfred/remacs
+[Declarative Rust static analysis]: http://blog.lambdaverse.org/comacro/
+[comacro]: https://github.com/kazcw/comacro
+[GLSL quasiquoting in Rust!]: https://phaazon.net/blog/glsl-quasiquoting
+[glsl]: https://crates.io/crates/glsl
+[Introducing Ruukh Framework]: https://sharadchand.com/2018/10/03/ruukh-framework.html
+[VueJS]: https://vuejs.org/
+[ReactJS]: https://reactjs.org/
