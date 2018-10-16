@@ -8,6 +8,17 @@
 
 Run `rustup update stable` to update to the latest version of Rust!
 
+## Announcements
+
+* [Announcing the Tokio Doc Push (we need you!)] - Tokio has a reputation for being hard to
+  understand. In an effort to fix this and make it easier for everyone looking to use Tokio,
+  the Tokio dev team is running the Tokio Doc Push! Come help out by writing some guides,
+  tutorials, and code docs.
+* [Announcing the xi-editor github organization] - Raph Levien has moved development of Xi
+  into its own organization on GitHub, which means you no longer need to sign the Google
+  Contributor License Agreement to make contributions! It also signals a shift towards Xi
+  being owned primarily by the community.
+
 ## New Toys
 
 * [Evcxr] - A REPL and Jupyter kernel for Rust.
@@ -33,6 +44,9 @@ Run `rustup update stable` to update to the latest version of Rust!
   an effort to port the core of Emacs to Rust.
 * [Declarative Rust static analysis] - Interactive explanation of [comacro], an experimental tool
   for building things like clippy lints and other static analysis for Rust.
+* [lolbench: automagically and empirically discovering Rust performance regressions]
+* [Rust and JavaScript Interop ↔️]: Fairly deep dive into the inner workings of [wasm-bindgen] and
+  how it creates the bindings between Rust-generated WebAssembly and JavaScript.
 
 ## Talks and Videos
 
@@ -61,3 +75,8 @@ Run `rustup update stable` to update to the latest version of Rust!
 [Introducing Ruukh Framework]: https://sharadchand.com/2018/10/03/ruukh-framework.html
 [VueJS]: https://vuejs.org/
 [ReactJS]: https://reactjs.org/
+[Announcing the Tokio Doc Push (we need you!)]: https://tokio.rs/blog/2018-10-doc-blitz/
+[Announcing the xi-editor github organization]: https://raphlinus.github.io/xi/2018/10/01/xi-organization.html
+[lolbench: automagically and empirically discovering Rust performance regressions]: https://blog.anp.lol/rust/2018/09/29/lolbench/
+[Rust and JavaScript Interop ↔️]: https://blog.ryanlevick.com/posts/wasm-bindgen-interop/
+[wasm-bindgen]: https://github.com/rustwasm/wasm-bindgen
