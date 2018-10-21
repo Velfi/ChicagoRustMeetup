@@ -1,1 +1,4 @@
 theme: jekyll-theme-minimal
+title: The Chicago Rust Meetup
+description: This website contains notes and presentations from the Chicago Rust Meetup
+logo: ./chicago-rust.png
