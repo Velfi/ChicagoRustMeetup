@@ -1,0 +1,366 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <title>The Rust Ecosystem: What To Know After "Hello, World!"</title>
+
+  <link
+    rel="stylesheet"
+    href="css/reveal.css"
+  >
+  <link
+    rel="stylesheet"
+    href="css/theme/rust.css"
+  >
+
+  <!-- Theme used for syntax highlighting of code -->
+  <link
+    rel="stylesheet"
+    href="lib/css/a11y-dark.css"
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia"
+    rel="stylesheet"
+  >
+
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+    document.getElementsByTagName('head')[0].appendChild(link);
+  </script>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Title -->
+      <section>
+        <section data-markdown>
+          <textarea data-template>
+            # The Rust Ecosystem
+            ```rust
+            // What to Know After
+            println!("Hello, World!");
+            ```
+          </textarea>
+        </section>
+        <section>
+          Rust has some amazing tools!
+        </section>
+      </section>
+      <!-- Rustup -->
+      <section>
+        <h2>Rustup</h2>
+        <section>The Rust toolchain installer</section>
+        <section data-markdown>
+          <textarea data-template>
+            * `curl https://sh.rustup.rs -sSf | sh`
+              * Install rustup (unless you're on Windows)
+            * `rustup update`
+              * Update Rust versions
+            * `rustup self update`
+              * Update rustup itself
+            * `rustup install <channel>`
+              * Install a sepcific Rust channel
+          </textarea>
+        </section>
+        <section>
+          <h3>WTF are channels?</h3>
+          <table>
+            <tr>
+              <td><b>stable</b></td>
+              <td>Won't change, should be bug-free <i>(default)</i></td>
+            </tr>
+            <tr>
+              <td><b>beta</b></td>
+              <td>Won't change, but might have bugs</td>
+            </tr>
+            <tr>
+              <td><b>nightly</b></td>
+              <td>contains experimental features that might be removed or changed</td>
+            </tr>
+          </table>
+        </section>
+        </tr>
+        <section>
+          <p>Installation Instructions:</p>
+          <a href="https://rustup.rs/">https://rustup.rs</a>
+          <p>Github Repository:</p>
+          <a href="https://github.com/rust-lang-nursery/rustup.rs">https://github.com/rust-lang-nursery/rustup.rs</a>
+        </section>
+      </section>
+      <!-- Cargo -->
+      <section>
+        <h2>Cargo</h2>
+        <section>Rust's dependency manager and build helper</section>
+        <section>
+          <h3>Two main responsibilities:</h3>
+          <ul>
+            <li>Fetch and build project dependencies</li>
+            <li>Act as a wrapper to <code>rustc</code> and pass the correct parameters for your project</li>
+          </ul>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            * `cargo new <project name>` create a new project
+              * `--lib` *(default)*
+              * `--bin`
+          </textarea>
+        </section>
+        <section>
+          <p>Dependencies are managed in your <code>Cargo.toml</code> file.</p>
+          <p>The <code>Cargo.lock</code> file allows for reproducible builds.
+            It's created automatically, so don't edit it by hand.</p>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            * `cargo build`
+              * build your project
+            * `cargo run`
+              * build and run your project *(only for `--bin` projects)*
+            * Both commands support
+              * `--debug` *(default)*
+              * `--release`
+          </textarea>
+        </section>
+        <section>
+          <h3>Cargo can also manage:</h3>
+          <ul>
+            <li>The running of tests</li>
+            <li>Building and running examples</li>
+            <li>Managing build scripts</li>
+            <li>Publishing to <a href="https://crates.io/">Crates.io</a></li>
+          </ul>
+        </section>
+        <section>
+          <p>The Cargo Book:</p>
+          <a href="https://doc.rust-lang.org/cargo">https://doc.rust-lang.org/cargo</a>
+        </section>
+      </section>
+      <!-- Crates.io -->
+      <section>
+        <h2>Crates.io</h2>
+        <section>
+          Rust's crate registry
+          <p class="fragment"><i>In Rust, packages are called crates.</i></p>
+        </section>
+        <section>
+          <ul>
+            <li>Great, if you have an idea of what you're looking for.</li>
+            <li>Contains links to documentation for most crates.</li>
+            <li>Lists popular crates, new crates.</li>
+            <li>Allows browsing by category.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Crates.rs</h3>
+          <p>An opinionated alternative to <a href="https://crates.io/">Crates.io</a> that's great for browsing:</p>
+          <a href="https://crates.rs/">https://crates.rs/</a>
+        </section>
+      </section>
+      <!-- rustfmt -->
+      <section>
+        <h2>rustfmt</h2>
+        <section>
+          The official formatter for Rust code
+          <p class="fragment">Available as part of <code>cargo</code> <br> since Rust 1.24</p>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            * `rustup component add rustfmt-preview` to install
+            * `cargo fmt` to run
+            * configured by creating a `rustfmt.toml` file in your project directory
+          </textarea>
+        </section>
+        <section>
+          <h3>It might get confused in a couple of situations:</h3>
+          <ul>
+            <li>Macros</li>
+            <li>Incorrect / non-compiling code</li>
+            <li>Any Rust code in a doc comment</li>
+            <li>Non-ASCII unicode</li>
+          </ul>
+        </section>
+      </section>
+      <!-- Clippy -->
+      <section>
+        <h2>Clippy</h2>
+        <section>A collection of lints to catch common mistakes and help you write more idiomatic Rust</section>
+        <section>Clippy is now part of <code>cargo</code>!</section>
+        <section data-markdown>
+          <textarea data-template>
+            * `rustup component add clippy-preview` to install
+            * `cargo clippy` to run
+          </textarea>
+        </section>
+        <section>
+          <p>Find a list of ALL current lints here:</p>
+          <a href="https://rust-lang-nursery.github.io/rust-clippy/">https://rust-lang-nursery.github.io/rust-clippy/</a>
+        </section>
+      </section>
+      <!-- Rust Language Server -->
+      <section>
+        <h2>RLS</h2>
+        <section>
+          The Rust Language Server
+          <p class="fragment">Rust lang support for your IDE</p>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            install with:
+
+            `rustup component add rls-preview rust-analysis rust-src`
+          </textarea>
+        </section>
+        <section>
+          <h3>Includes:</h3>
+          <ul>
+            <li>Syntax Highlighting</li>
+            <li>Snippets</li>
+            <li>Build Tasks</li>
+            <li>Error Checking</li>
+            <li>Go To Definition</li>
+            <li>Find Implementations</li>
+            <li>And more...</li>
+          </ul>
+        </section>
+        <section>
+          <p>Mostly depends on the Rust compiler</p>
+          <p>Falls back to Racer for situations where the compiler is too slow</p>
+        </section>
+        <section>
+          <p>More info:</p>
+          <a href="https://github.com/rust-lang-nursery/rls">https://github.com/rust-lang-nursery/rls</a>
+          <a href="https://github.com/racer-rust/racer">https://github.com/racer-rust/racer</a>
+        </section>
+      </section>
+      <!-- IntelliJ Rust -->
+      <section>
+        <h2>IDE recommendations</h2>
+        <section>
+          <ul>
+            <li>Visual Studio Code with the <code>rust</code> extension</li>
+            <li>IntelliJ Rust</li>
+            <li>Corrosion, an Eclipse based IDE for Rust</li>
+          </ul>
+        </section>
+        <section>
+          <a href="https://github.com/rust-lang-nursery/rls-vscode">https://github.com/rust-lang-nursery/rls-vscode</a><br>
+          <a href="https://intellij-rust.github.io/">https://intellij-rust.github.io/</a><br>
+          <a href="https://github.com/eclipse/corrosion">https://github.com/eclipse/corrosion</a>
+        </section>
+      </section>
+      <!-- Rust Playground -->
+      <section>
+        <h2>Rust playground</h2>
+        <section>An open source web-based REPL for Rust</section>
+        <section>
+          <ul>
+            <li>Includes <code>rustfmt</code> and <code>clippy</code></li>
+            <li>Allows you to compile in <code>--release</code> or <code>--debug</code> mode</li>
+            <li>Supports <code>stable</code>, <code>beta</code>, and <code>nightly</code> channels</li>
+            <li>Allows for easy sharing and demonstration of Rust code snippets</li>
+            <li>Allows you to view generated assembly, LLVM IR, MIR, and WASM code</li>
+          </ul>
+        </section>
+        <section>
+          <p>Play with it here:</p>
+          <a href="https://play.rust-lang.org/">https://play.rust-lang.org/</a>
+        </section>
+      </section>
+      <!-- Compiler Explorer -->
+      <section>
+        <h2>Compiler Explorer</h2>
+        <section>
+          A featureful way to explore the assembly code generated by compiling a Rust program
+          <p class="fragment">Great for when you really want to make a program as performant as possible</p>
+          <p class="fragment">Includes two example programs, pre- and post-optimization</p>
+        </section>
+        <section>
+          <p>See it here:</p>
+          <a href="https://godbolt.org/">https://godbolt.org/</a>
+          <p><small><i>Don't forget to switch it to Rust mode</i></small></p>
+        </section>
+      </section>
+      <!-- The Book -->
+      <section>
+        <h2 style="font-size: 1.9em;">The Rust<br> Programming Language</h2>
+        <section>
+          <p class="fragment"><b>a.k.a "TRPL"</b></p>
+          <p class="fragment"><b>a.k.a "The Book"</b></p>
+        </section>
+        <section>
+          <p>The best way to learn Rust!</p>
+          <p class="fragment">It contains almost anything you could want to know about the language!</p>
+        </section>
+        <section>
+          <p>Read the whole thing right now:</p>
+          <a href="https://doc.rust-lang.org/book/2018-edition">https://doc.rust-lang.org/book/2018-edition</a>
+        </section>
+      </section>
+      <!-- The Rustonomicon -->
+      <section>
+        The Rustonomicon
+        <section
+          data-background-color="#000"
+          style="color: white"
+        >
+          <p>However...</p>
+          <p class="fragment">there exists a dark counterpart to <br>The Book</p>
+          <p class="fragment">known as</p>
+          <p
+            class="fragment"
+            style="font-family: 'UnifrakturMaguntia'; font-size: 7rem"
+          >The Rustonomicon</p>
+        </section>
+        <section>
+          All about <code>unsafe</code> Rust
+        </section>
+        <section>
+          <p>You should be pretty familiar with safe Rust first</p>
+          <p class="fragment">It deals with some of the more unstable aspects of Rust</p>
+        </section>
+        <section>
+          It teaches you how to implement <code>std::vec::Vec</code>
+        </section>
+        <section>
+          <p>Unlock the dark secrets of Rust:</p>
+          <a href="https://doc.rust-lang.org/nomicon/">https://doc.rust-lang.org/nomicon/</a>
+        </section>
+      </section>
+      <!-- Q&A -->
+      <section>
+        Zelda will now answer your questions
+      </section>
+    </div>
+  </div>
+
+  <script src="lib/js/head.min.js"></script>
+  <script src="js/reveal.js"></script>
+
+  <script>
+    // More info about config & dependencies:
+    // - https://github.com/hakimel/reveal.js#configuration
+    // - https://github.com/hakimel/reveal.js#dependencies
+    Reveal.initialize({
+      dependencies: [
+        { src: 'plugin/markdown/marked.js' },
+        { src: 'plugin/markdown/markdown.js' },
+        { src: 'plugin/notes/notes.js', async: true },
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+      ]
+    });
+  </script>
+</body>
+
+</html>
