@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Rust Editions</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+		<script src="plugin/markdown/marked.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Rust Editions</h1>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<textarea data-template>
+							## Stability Guarantees
+
+							* You can *always* update to the latest Rust release
+							* Old code will *always* compile with a newer compiler
+							* Breaking changes *only* for security fixes
+						</textarea>
+					</section>
+
+					<section data-markdown>
+						<textarea data-template>
+							> To put it simply, our responsibility is to ensure that you never dread upgrading
+							> Rust. If your code compiles on Rust stable 1.0, it should compile with Rust stable
+							> 1.x with a minimum of hassle.
+
+							[Stability as a Deliverable](https://blog.rust-lang.org/2014/10/30/Stability.html)
+						</textarea>
+					</section>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Stability Without Stagnation
+
+						[What is Rust 2018?](https://blog.rust-lang.org/2018/07/27/what-is-rust-2018.html)
+
+						* New language features require new keywords
+						* Old patterns get replaced by new ones
+						* Many small changes add up over time
+					</textarea>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<textarea data-template>
+							## Enter Editions
+
+							* Old code will *always* compile with a newer compiler
+							* Breaking changes are opt-in and limited
+							* Different editions can still work together
+						</textarea>
+					</section>
+
+					<section data-markdown>
+						<textarea data-template>
+							New compilers still support old editions
+						</textarea>
+					</section>
+
+					<section data-markdown>
+						<textarea data-template>
+							Opt-into new editions:
+
+							```toml
+							edition = "2018"
+							```
+						</textarea>
+					</section>
+
+					<section data-markdown>
+						<textarea data-template>
+							Breaking changes only affect syntax
+						</textarea>
+					</section>
+				</section>
+
+				<section>
+					<h2>Give Rust 2018 a try!</h2>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
