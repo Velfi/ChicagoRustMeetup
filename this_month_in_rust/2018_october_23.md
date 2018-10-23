@@ -38,6 +38,7 @@ Run `rustup update stable` to update to the latest version of Rust!
 * [concread] - A new crate for concurrently readable datastructures.
 * [macro_railroad browser plugin] - A cool browser plugin for visualizing macro syntax in Rust docs.
 * [Rust on Glitch.com] - A basic example of how to run a Rust web app on [Glitch.com].
+* [Amethyst 0.9 has been released!] - A new version of the Amethyst game engine is out!
 
 ## Blog Posts and Articles
 
@@ -116,3 +117,4 @@ Run `rustup update stable` to update to the latest version of Rust!
 [Rust on Glitch.com]: https://glitch.com/edit/#!/hello-rust?path=README.md:1:0
 [Glitch.com]: https://glitch.com/
 [Routing and Extraction in Tide: a first sketch]: https://rust-lang-nursery.github.io/wg-net/2018/10/16/tide-routing.html
+[Amethyst 0.9 has been released!]: https://www.amethyst.rs/blog/release-0-9/
