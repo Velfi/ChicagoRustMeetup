@@ -14,8 +14,6 @@
 * [As of November 1st 2018, Rust makes up about 6% of the Firefox codebase!][firefox]
 * [Announcing Rust 2018 Beta release!]
 * [The last two months in rustsim #1] - There's now a rustsim organization in charge of [nphysics], [ncollide], and [nalgebra]! Here's what they've been up to.
-* [soup]
-* [Announcing Gotham 0.3]
 
 [email]: https://users.rust-lang.org/t/a-verified-email-address-will-be-required-to-publish-to-crates-io-starting-on-2019-02-28/22425
 [firefox]: https://twitter.com/eroc/status/1061049330574884864?s=09
@@ -24,7 +22,6 @@
 [nphysics]: https://nphysics.org/
 [ncollide]: https://ncollide.org/
 [nalgebra]: https://nalgebra.org/
-[Announcing Gotham 0.3]: https://gotham.rs/blog/release/2018/10/29/gotham-0.3.html
 
 ## New Toys
 
@@ -32,12 +29,14 @@
 * [SUPER 0.5.0 released!] - SUPER is an Android application analysis tool that tries to detect potential security vulnerabilities.
 * [soup] - A web scraping crate inspired by the [Beautiful Soup] python library.
 * [json_in_type] - A macro for super-fast serialization of Rust types to JSON.
+* [Announcing Gotham 0.3] - Gotham is a web server framework for Rust.
 
 [TabNine]: https://www.reddit.com/r/rust/comments/9uhc1x
 [SUPER 0.5.0 released!]: https://superanalyzer.rocks/2018/11/03/super-0.5.0-release
 [soup]: https://pwoolcoc.gitlab.io/soup/soup/index.html
 [Beautiful Soup]: https://www.crummy.com/software/BeautifulSoup/
 [json_in_type]: https://github.com/lovasoa/json_in_type
+[Announcing Gotham 0.3]: https://gotham.rs/blog/release/2018/10/29/gotham-0.3.html
 
 ## Blog Posts and Articles
 
