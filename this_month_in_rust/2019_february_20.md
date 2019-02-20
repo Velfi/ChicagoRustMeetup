@@ -22,7 +22,7 @@ Stories about people using Rust to build cool things, commercially or otherwise.
 
 ## Toys and Things
 
-Things build in Rust, either applications that you can run, or libraries that you can use.
+Things built in Rust, either applications that you can run, or libraries that you can use.
 
 * [Rust Runtime for AWS Lambda](https://aws.amazon.com/blogs/opensource/rust-runtime-for-aws-lambda/) - You can now create AWS Lamba functions with Rust!
 * [Sandspiel, a falling sand game built in Rust+WebGL](https://www.reddit.com/r/rust/comments/a6v0p1/sandspiel_a_falling_sand_game_built_in_rustwebgl/)
