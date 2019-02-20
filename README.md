@@ -9,6 +9,7 @@
 * [November 27th, 2018](/this_month_in_rust/2018_november_27.md)
 * [October 23rd, 2018](/this_month_in_rust/2018_october_23.md)
 * [September 25th, 2018](/this_month_in_rust/2018_september_25.md)
+* [February 20th, 2019](/this_month_in_rust/2019_february_20.md)
 
 ### Lightning Talks
 * [Rust Editions](/lightning_talks/rust_editions/index.html)
