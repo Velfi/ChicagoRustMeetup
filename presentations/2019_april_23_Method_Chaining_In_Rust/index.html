@@ -1,49 +1,114 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reset.css">
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+    <title>Better Method Chaining in Rust</title>
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/monokai.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css">
 
-		<script src="js/reveal.js"></script>
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true }
-				]
-			});
-		</script>
-	</body>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Seeking Better Method Chaining in Rust</h1>
+            </section>
+            <section>
+                <section>
+                    <pre><code class="rust" data-trim>
+                    let result = Command::new("foo")
+                        .arg("--bar")
+                        .arg("--baz")
+                        .arg("quux")
+                        .status()
+                        .unwrap();
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    let command = Command::new("foo")
+                        .arg("--bar");
+
+                    if set_baz {
+                        command.arg("--baz");
+                    }
+
+                    let result = command
+                        .arg("quux")
+                        .status()
+                        .unwrap();
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    error[E0716]: temporary value dropped while borrowed
+                     --> src/main.rs:6:19
+                      |
+                    6 |     let command = Command::new("foo").arg("--bar");
+                      |                   ^^^^^^^^^^^^^^^^^^^             - temporary value is freed at the end of this statement
+                      |                   |
+                      |                   creates a temporary which is freed while still in use
+                    ...
+                    9 |         command.arg("--baz");
+                      |         ------- borrow later used here
+                      |
+                      = note: consider using a `let` binding to create a longer lived value
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    let mut command = Command::new("foo");
+                    command.arg("--bar");
+
+                    if set_baz {
+                        command.arg("--baz");
+                    }
+
+                    let result = command
+                        .arg("quux")
+                        .status()
+                        .unwrap();
+                    </code></pre>
+                </section>
+            </section>
+        </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+        // More info about config & dependencies:
+        // - https://github.com/hakimel/reveal.js#configuration
+        // - https://github.com/hakimel/reveal.js#dependencies
+        Reveal.initialize({
+            dependencies: [
+                { src: 'plugin/markdown/marked.js' },
+                { src: 'plugin/markdown/markdown.js' },
+                { src: 'plugin/notes/notes.js', async: true },
+                { src: 'plugin/highlight/highlight.js', async: true }
+            ]
+        });
+    </script>
+</body>
+
 </html>
