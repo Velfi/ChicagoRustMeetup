@@ -31,6 +31,8 @@
                 <h1>Seeking Better Method Chaining in Rust</h1>
             </section>
             <section>
+                <h2>A Real-World Example</h2>
+
                 <section>
                     <pre><code class="rust" data-trim>
                     let result = Command::new("foo")
@@ -76,8 +78,8 @@
                 </section>
 
                 <section>
-                    <pre><code class="rust" data-trim>
-                    let mut command = Command::new("foo");
+                    <pre><code class="rust" data-trim data-noescape>
+                    <mark>let mut command = Command::new("foo");</mark>
                     command.arg("--bar");
 
                     if set_baz {
@@ -90,6 +92,45 @@
                         .unwrap();
                     </code></pre>
                 </section>
+            </section>
+
+            <section>
+                <h2>Method Chaining Today</h2>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    pub fn arg&lt;S&gt;(&mut self, arg: S) -> &mut Command {
+                        // Add the argument...
+                        self
+                    }
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    pub fn chain_ref(&mut self) -> &mut Self {
+                        // Do some work...
+                        self
+                    }
+
+                    pub fn chain_move(mut self) -> Self {
+                        // Do some work...
+                        self
+                    }
+                    </code></pre>
+                </section>
+            </section>
+
+            <section data-markdown>
+                <textarea data-template>
+                    From [Chaining Functions Without Returning Self](https://randompoison.github.io/posts/returning-self/):
+
+                    > The fundamental problem with returning `self`... is that you’re
+                    > contorting your API in order to enable something that’s completely
+                    > orthogonal to what your API is doing. Your function’s signature
+                    > should reflect its behavior, and should be usable in a method
+                    > chain regardless of its return type.
+                </textarea>
             </section>
         </div>
     </div>
