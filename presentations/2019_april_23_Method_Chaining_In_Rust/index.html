@@ -172,6 +172,42 @@
                     </code></pre>
                 </section>
             </section>
+
+            <section>
+                <section>
+                    <h2>Some Existing Alternatives</h2>
+                </section>
+
+                <section>
+                    <h3>cascade</h3>
+
+                    <pre><code class="rust" data-trim>
+                    let cascaded_list = cascade! {
+                        Vec::new();
+                        ..push("Cascades");
+                        ..push("reduce");
+                        ..push("boilerplate");
+                    };
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>pipeline</h3>
+
+                    <pre><code class="rust" data-trim>
+                    let result = pipe_res!(
+                        "http://rust-lang.org"
+                        => download
+                        => parse
+                        => get_links
+                    );
+                    </code></pre>
+                </section>
+            </section>
+
+            <section>
+                <h2>Discuss!</h2>
+            </section>
         </div>
     </div>
 
