@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Better Method Chaining in Rust</title>
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Discussion: Better Method Chaining in Rust</h1>
+            </section>
+
+            <section>
+                <h2>A Real-World Example</h2>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    let result = Command::new("foo")
+                        .arg("--bar")
+                        .arg("--baz")
+                        .arg("quux")
+                        .status()
+                        .unwrap();
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    let command = Command::new("foo")
+                        .arg("--bar");
+
+                    if set_baz {
+                        command.arg("--baz");
+                    }
+
+                    let result = command
+                        .arg("quux")
+                        .status()
+                        .unwrap();
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    error[E0716]: temporary value dropped while borrowed
+                     --> src/main.rs:6:19
+                      |
+                    6 |     let command = Command::new("foo").arg("--bar");
+                      |                   ^^^^^^^^^^^^^^^^^^^             - temporary value is freed at the end of this statement
+                      |                   |
+                      |                   creates a temporary which is freed while still in use
+                    ...
+                    9 |         command.arg("--baz");
+                      |         ------- borrow later used here
+                      |
+                      = note: consider using a `let` binding to create a longer lived value
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    <mark>let mut command = Command::new("foo");</mark>
+                    command.arg("--bar");
+
+                    if set_baz {
+                        command.arg("--baz");
+                    }
+
+                    let result = command
+                        .arg("quux")
+                        .status()
+                        .unwrap();
+                    </code></pre>
+                </section>
+            </section>
+
+            <section>
+                <h2>Method Chaining Today</h2>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    pub fn arg&lt;S&gt;(&mut self, arg: S) -> &mut Command {
+                        // Add the argument...
+                        self
+                    }
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim>
+                    pub fn chain_ref(&mut self) -> &mut Self {
+                        // Do some work...
+                        self
+                    }
+
+                    pub fn chain_move(mut self) -> Self {
+                        // Do some work...
+                        self
+                    }
+                    </code></pre>
+                </section>
+            </section>
+
+            <section data-markdown>
+                <textarea data-template>
+                    From [Chaining Functions Without Returning Self](https://randompoison.github.io/posts/returning-self/):
+
+                    > The fundamental problem with returning `self`... is that you’re
+                    > contorting your API in order to enable something that’s completely
+                    > orthogonal to what your API is doing. Your function’s signature
+                    > should reflect its behavior, and should be usable in a method
+                    > chain regardless of its return type.
+                </textarea>
+            </section>
+
+            <section>
+                <h2>A Digression</h2>
+
+                <section data-markdown>
+                    <textarea data-template>
+                        ```rust
+                        foo().bar().baz();
+                        ```
+
+                        vs
+
+                        ```rust
+                        baz(bar(foo()))
+                        ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                        "cascade" vs "pipeline"
+                    </textarea>
+                </section>
+
+                <section>
+                    <pre><code class="dart" data-trim>
+                    someValue
+                        ..foo()
+                        ..bar()
+                        ..baz();
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="elixir" data-trim>
+                    foo() |> bar() |> baz()
+                    </code></pre>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Some Existing Alternatives</h2>
+                </section>
+
+                <section>
+                    <h3>cascade</h3>
+
+                    <pre><code class="rust" data-trim>
+                    let cascaded_list = cascade! {
+                        Vec::new();
+                        ..push("Cascades");
+                        ..push("reduce");
+                        ..push("boilerplate");
+                    };
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>pipeline</h3>
+
+                    <pre><code class="rust" data-trim>
+                    let result = pipe_res!(
+                        "http://rust-lang.org"
+                        => download
+                        => parse
+                        => get_links
+                    );
+                    </code></pre>
+                </section>
+            </section>
+
+            <section>
+                <h2>Discuss!</h2>
+            </section>
+        </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+        // More info about config & dependencies:
+        // - https://github.com/hakimel/reveal.js#configuration
+        // - https://github.com/hakimel/reveal.js#dependencies
+        Reveal.initialize({
+            dependencies: [
+                { src: 'plugin/markdown/marked.js' },
+                { src: 'plugin/markdown/markdown.js' },
+                { src: 'plugin/notes/notes.js', async: true },
+                { src: 'plugin/highlight/highlight.js', async: true }
+            ]
+        });
+    </script>
+</body>
+
+</html>
