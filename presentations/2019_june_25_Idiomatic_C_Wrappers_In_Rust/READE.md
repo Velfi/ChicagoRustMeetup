@@ -9,3 +9,8 @@
     `Sync` due to internal mutation on fetches.
   * Initially defined schema pointer-types as unit structs, but that means they were both `Send`
     and `Sync` by default, which isn't correct!
+* Schema pointer hacking.
+* Enums are magic!
+  * Other language SDKs use a pattern where you register a bunch of callbacks for each type of
+    worker op, and then they internally dispatch to the correct callback. Rust enums basically do
+    this automatically.
