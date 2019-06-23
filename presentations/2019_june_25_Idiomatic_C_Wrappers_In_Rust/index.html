@@ -1,49 +1,147 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reset.css">
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+    <title>Idiomatic Wappers Around C</title>
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/monokai.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css">
 
-		<script src="js/reveal.js"></script>
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true }
-				]
-			});
-		</script>
-	</body>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Building a Safe, Idiomatic Rust Wrapper Around C</h1>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Some Background</h2>
+                </section>
+
+                <section>
+                    <h2>SpatialOS</h2>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>The Connection Object and Thread Safety</h2>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    WORKER_API Worker_Connection* Worker_ConnectionFuture_Get(
+                        Worker_ConnectionFuture* future,
+                        const uint32_t* timeout_millis);
+
+                    WORKER_API Worker_OpList* Worker_Connection_GetOpList(
+                        Worker_Connection* connection,
+                        uint32_t timeout_millis);
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct WorkerConnection {
+                        raw: *mut Worker_Connection,
+                    }
+
+                    impl WorkerConnection {
+                        pub fn get_op_list(&self) -> OpList {
+                            Worker_Connection_GetOpList(self.raw, 0)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown data-background-image="images/Thinking_Face_Emoji.png"
+                    data-background-size="contain">
+                    <textarea data-template>
+                    Is it `Send`?
+                    </textarea>
+                </section>
+
+                <section data-markdown data-background-image="images/Thinking_Face_Emoji.png">
+                    <textarea data-template>
+                    Is it `Sync`???
+                    </textarea>
+                </section>
+
+                <section>
+                    <img data-src="images/not-thread-safe.png">
+                </section>
+
+                <section data-background-image="https://media.giphy.com/media/lJNoBCvQYp7nq/giphy.gif">
+                    <h2>
+                        To the forums!
+                    </h2>
+                </section>
+
+                <section>
+                    <img data-src="images/no-thread-safety-guarantees.png">
+                </section>
+
+                <section data-background-image="images/praise-it.png" data-background-position="top">
+                    <img data-src="images/maybe-thread-safe.png">
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct WorkerConnection {
+                        raw: *mut Worker_Connection,
+                    }
+
+                    impl WorkerConnection {
+                        pub fn get_op_list(&mut self) -> OpList { ... }
+                    }
+
+                    unsafe impl Send for WorkerConnection {}
+                    unsafe impl Sync for WorkerConnection {}
+                    ```
+                    </textarea>
+                </section>
+            </section>
+        </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+        // More info about config & dependencies:
+        // - https://github.com/hakimel/reveal.js#configuration
+        // - https://github.com/hakimel/reveal.js#dependencies
+        Reveal.initialize({
+            dependencies: [
+                { src: 'plugin/markdown/marked.js' },
+                { src: 'plugin/markdown/markdown.js' },
+                { src: 'plugin/notes/notes.js', async: true },
+                { src: 'plugin/highlight/highlight.js', async: true }
+            ]
+        });
+    </script>
+</body>
+
 </html>
