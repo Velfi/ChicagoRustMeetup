@@ -119,6 +119,95 @@
                     </textarea>
                 </section>
             </section>
+
+            <section>
+                <section>
+                    <h2>Speaking of OpList...</h2>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    WORKER_API Worker_OpList* Worker_Connection_GetOpList(
+                        Worker_Connection* connection,
+                        uint32_t timeout_millis);
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    typedef enum Worker_OpType {
+                        WORKER_OP_TYPE_DISCONNECT = 1,
+                        WORKER_OP_TYPE_FLAG_UPDATE = 2,
+                        WORKER_OP_TYPE_LOG_MESSAGE = 3,
+                        WORKER_OP_TYPE_METRICS = 4,
+                        WORKER_OP_TYPE_CRITICAL_SECTION = 5,
+                        WORKER_OP_TYPE_ADD_ENTITY = 6,
+                        WORKER_OP_TYPE_REMOVE_ENTITY = 7,
+                        WORKER_OP_TYPE_RESERVE_ENTITY_ID_RESPONSE = 8,
+                        WORKER_OP_TYPE_RESERVE_ENTITY_IDS_RESPONSE = 9,
+
+                        // ... and so on
+                    } Worker_OpType;
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    typedef struct Worker_Op {
+                        uint8_t op_type;
+
+                        union {
+                            Worker_DisconnectOp disconnect;
+                            Worker_FlagUpdateOp flag_update;
+                            Worker_LogMessageOp log_message;
+                            Worker_MetricsOp metrics;
+                            Worker_CriticalSectionOp critical_section;
+                            Worker_AddEntityOp add_entity;
+
+                            // ... and so on
+                        };
+                    } Worker_Op;
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```csharp
+                    // Get the latest operations
+                    // received by the connection.
+                    var opList = connection.GetOpList(0);
+
+                    // Invoke callbacks.
+                    dispatcher.Process(opList);
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    #[derive(Debug)]
+                    pub enum WorkerOp<'a> {
+                        Disconnect(DisconnectOp),
+                        AddEntity(AddEntityOp),
+                        RemoveEntity(RemoveEntityOp),
+                        AddComponent(AddComponentOp<'a>),
+                        RemoveComponent(RemoveComponentOp),
+                        ComponentUpdate(ComponentUpdateOp<'a>),
+                        EntityQueryResponse(EntityQueryResponseOp<'a>),
+
+                        // ... and so on
+                    }
+                    ```
+                    </textarea>
+                </section>
+            </section>
         </div>
     </div>
 
