@@ -189,7 +189,10 @@
                     </textarea>
                 </section>
 
-                <section data-markdown>
+                <section data-background-image="images/neutral-face.png" data-background-size="contain"></section>
+
+                <section data-markdown data-background-image="images/party-popper.png" data-background-size="contain"
+                    data-background-position="left">
                     <textarea data-template>
                     ```rust
                     #[derive(Debug)]
@@ -291,6 +294,31 @@
                     <h2>What if we <em>LIED</em>?</h2>
                 </section>
 
+                <section>
+                    <ul>
+                        <li>The data is completely opaque</li>
+                        <li>We never dereference the pointer</li>
+                        <li>All we care about is the value of the pointer</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <ul>
+                        <li>Sometimes we own the data</li>
+                        <li>Sometimes can mutate the data</li>
+                        <li>Sometimes we can only read the data</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Rust has conventions for this:</p>
+                    <ul>
+                        <li><code>Box&lt;T&gt;</code></li>
+                        <li><code>&mut T</code></li>
+                        <li><code>&T</code></li>
+                    </ul>
+                </section>
+
                 <section data-markdown>
                     <textarea data-template>
                     ```rust
@@ -303,10 +331,45 @@
                     <textarea data-template>
                     ```rust
                     impl SchemaComponentData {
-                        pub fn new() -> Box<SchemaComponentData> {
-                            Box::from_raw(
-                                Schema_CreateComponentData() as *mut _,
-                            )
+                        pub fn component_id(&self) -> ComponentId {
+                            let raw = self as *mut _;
+                            Schema_GetComponentDataComponentId(raw)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    impl Object {
+                        pub(crate) fn add_object_field(
+                            &mut self,
+                            field: FieldId,
+                        ) -> &mut Object {
+                            let raw = self as *mut _;
+                            let result = Schema_AddObject(raw, field)
+                            &mut *(result as *mut _)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub trait Ownable {
+                        type Raw;
+                        unsafe fn destroy(me: *mut Self::Raw);
+                    }
+
+                    pub struct Owned<T: Ownable>(*mut T::Raw);
+
+                    impl<T: Ownable> Drop for Owned<T> {
+                        fn drop(&mut self) {
+                            T::destroy(self.0.as_ptr());
                         }
                     }
                     ```
@@ -317,9 +380,19 @@
                     <textarea data-template>
                     ```rust
                     impl SchemaComponentData {
-                        pub fn component_id(&self) -> ComponentId {
-                            let raw = self as *mut _;
-                            Schema_GetComponentDataComponentId(raw)
+                        pub fn new() -> Owned<SchemaComponentData> {
+                            Owned(
+                                Schema_CreateComponentData(),
+                            )
+                        }
+                    }
+
+
+                    impl Ownable for SchemaComponentData {
+                        type Raw = Schema_ComponentData;
+
+                        unsafe fn destroy(inst: *mut Self::Raw) {
+                            Schema_DestroyComponentData(inst);
                         }
                     }
                     ```
