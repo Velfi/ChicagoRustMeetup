@@ -208,6 +208,124 @@
                     </textarea>
                 </section>
             </section>
+
+            <section>
+                <section>
+                    <h2>Playing With Pointers</h2>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    // Borrowed, read-only data.
+                    typedef struct Worker_ComponentData {
+                        void* reserved;
+                        Worker_ComponentId component_id;
+                        Schema_ComponentData* schema_type;
+                        Worker_ComponentDataHandle* user_handle;
+                    } Worker_ComponentData;
+
+                    // Owned, mutable data.
+                    Schema_ComponentData* Schema_CreateComponentData();
+                    void Schema_DestroyComponentData(Schema_ComponentData* data);
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct SchemaComponentData {
+                        raw: *mut Schema_ComponentData,
+                    }
+
+                    impl SchemaComponentData {
+                        pub fn component_id(&self) -> ComponentId {
+                            Schema_GetComponentDataComponentId(self.raw)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section>
+                    How do we differentiate between <em>owned</em> and <em>borrowed</em> data?
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct SchemaComponentData<'a> {
+                        raw: *mut Schema_ComponentData,
+                        _marker: PhantomData<&'a Schema_ComponentData>,
+                    }
+
+                    impl SchemaComponentData {
+                        pub fn new() -> SchemaComponentData<'static> {
+                            Schema_GetComponentDataComponentId(self.raw)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown data-background-image="images/circle-with-slash.png"
+                    data-background-size="contain">
+                    <textarea data-template>
+                    ```rust
+                    impl Drop for SchemaComponentData<'static> {
+                        fn drop(&mut self) {
+                            Schema_DestroyComponentData(self.raw);
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-background-image="images/three-weeks-later.jpg" data-background-size="contain"></section>
+
+                <section data-background-image="https://media.giphy.com/media/1SjmCkZsD0Wc0/giphy.gif"
+                    data-background-size="cover"></section>
+
+                <section data-background-image="https://media.giphy.com/media/Q9kgQp6ptfcLS/giphy.gif">
+                    <h2>What if we <em>LIED</em>?</h2>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct SchemaComponentData;
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    impl SchemaComponentData {
+                        pub fn new() -> Box<SchemaComponentData> {
+                            Box::from_raw(
+                                Schema_CreateComponentData() as *mut _,
+                            )
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    impl SchemaComponentData {
+                        pub fn component_id(&self) -> ComponentId {
+                            let raw = self as *mut _;
+                            Schema_GetComponentDataComponentId(raw)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+            </section>
         </div>
     </div>
 
