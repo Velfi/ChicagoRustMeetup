@@ -2,6 +2,7 @@
 ## Welcome
 
 ### Presentations
+* [June 25th, 2019 - Building a Safe, Idiomatic Rust Wrapper Around C](presentations/2019_june_25_Idiomatic_C_Wrappers_In_Rust/index.html)
 * [April 23rd, 2019 - Idiomatic Method Chaining in Rust](/presentations/2019_april_23_Method_Chaining_In_Rust/index.html)
 * [March 27th, 2019 - Futures in Rust and Haskell](https://slides.com/wraithm/async-io-in-rust-and-haskell/)
 * [November 27th, 2018 - So You Want To Write A Protocol Client In Rust](/presentations/2018_november_27_So_You_Want_To_Write_A_Protocol_Client/index.html)
