@@ -398,6 +398,22 @@
                     ```
                     </textarea>
                 </section>
+
+                <section>
+                    <h2>One more thing...</h2>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct SchemaComponentData(
+                        PhantomData<*mut Schema_ComponentData>,
+                    );
+
+                    unsafe impl Send for SchemaComponentData {}
+                    ```
+                    </textarea>
+                </section>
             </section>
         </div>
     </div>
