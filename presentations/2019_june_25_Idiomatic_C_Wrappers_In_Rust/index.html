@@ -130,6 +130,16 @@
                     <img data-src="images/maybe-thread-safe.png">
                 </section>
 
+                <section>
+                    <blockquote>... or wrapping it in a mutex.</blockquote>
+                    <p>It's safe to access from different threads, so long as only one thread accesses it at a time.</p>
+                </section>
+
+                <section>
+                    <blockquote>It doesn't use global variables</blockquote>
+                    <p>There's no shared state, methods mutate data within the struct in an unsynchronized way.</p>
+                </section>
+
                 <section data-markdown>
                     <textarea data-template>
                     ```rust
@@ -293,7 +303,10 @@
 
                     impl SchemaComponentData {
                         pub fn new() -> SchemaComponentData<'static> {
-                            Schema_GetComponentDataComponentId(self.raw)
+                            Self {
+                                raw: Schema_CreateComponentData(),
+                                _marker: PhantomData,
+                            }
                         }
                     }
                     ```
