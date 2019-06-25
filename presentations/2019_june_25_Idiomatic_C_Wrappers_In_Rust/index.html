@@ -351,6 +351,14 @@
                     <textarea data-template>
                     ```rust
                     pub struct SchemaComponentData;
+
+                    impl SchemaComponentData {
+                        unsafe fn from_raw<'a>(
+                            raw: *mut Schema_ComponentData,
+                        ) -> &'a SchemaComponentData {
+                            &*(raw as *mut _)
+                        }
+                    }
                     ```
                     </textarea>
                 </section>
@@ -372,7 +380,7 @@
                     <textarea data-template>
                     ```rust
                     impl Object {
-                        pub(crate) fn add_object_field(
+                        pub fn add_object_field(
                             &mut self,
                             field: FieldId,
                         ) -> &mut Object {
@@ -442,6 +450,10 @@
                     ```
                     </textarea>
                 </section>
+            </section>
+
+            <section>
+                The End
             </section>
         </div>
     </div>
