@@ -1,0 +1,491 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Idiomatic Wappers Around C</title>
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Building a Safe, Idiomatic Rust Wrapper Around C</h1>
+            </section>
+
+            <section data-background-image="images/spatialos-diagram.png" data-background-size="contain"
+                data-background-position="left">
+                <section>
+                    <h2>SpatialOS:</h2>
+                    <h3>Some Background</h3>
+                </section>
+
+                <section>
+                    <p>A networking layer for multiplayer games:</p>
+                    <ul>
+                        <li>Persistence</li>
+                        <li>Scale</li>
+                        <li>Simulation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Provide direct support for popular game engines:</p>
+                    <ul>
+                        <li>Unity</li>
+                        <li>Unreal Engine 4</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Supports multiple languages:</p>
+                    <ul>
+                        <li class="fragment">C++</li>
+                        <li class="fragment">C#</li>
+                        <li class="fragment">Java</li>
+                        <li class="fragment">C</li>
+                        <li class="fragment">RUST?<span class="fragment">?<span class="fragment">?<span
+                                        class="fragment">?<span class="fragment">?<span
+                                                class="fragment">?</span></span></span></span></span></li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>The Connection Object and Thread Safety</h2>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    WORKER_API Worker_Connection* Worker_ConnectionFuture_Get(
+                        Worker_ConnectionFuture* future,
+                        const uint32_t* timeout_millis);
+
+                    WORKER_API Worker_OpList* Worker_Connection_GetOpList(
+                        Worker_Connection* connection,
+                        uint32_t timeout_millis);
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct WorkerConnection {
+                        raw: *mut Worker_Connection,
+                    }
+
+                    impl WorkerConnection {
+                        pub fn get_op_list(&self) -> OpList {
+                            Worker_Connection_GetOpList(self.raw, 0)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-background-image="images/Thinking_Face_Emoji.png" data-background-size="contain">
+                    <h3>Is it Send?</h3>
+                </section>
+
+                <section data-background-image="images/Thinking_Face_Emoji.png">
+                    <h2>Is it Sync?</h2>
+                </section>
+
+                <section>
+                    <img data-src="images/not-thread-safe.png">
+                </section>
+
+                <section data-background-image="https://media.giphy.com/media/lJNoBCvQYp7nq/giphy.gif">
+                    <h2>
+                        To the forums!
+                    </h2>
+                </section>
+
+                <section>
+                    <img data-src="images/no-thread-safety-guarantees.png">
+                </section>
+
+                <section data-background-image="images/praise-it.png" data-background-position="top">
+                    <img data-src="images/maybe-thread-safe.png">
+                </section>
+
+                <section>
+                    <blockquote>... or wrapping it in a mutex.</blockquote>
+                    <p>It's safe to access from different threads, so long as only one thread accesses it at a time.</p>
+                </section>
+
+                <section>
+                    <blockquote>It doesn't use global variables</blockquote>
+                    <p>There's no shared state, methods mutate data within the struct in an unsynchronized way.</p>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct WorkerConnection {
+                        raw: *mut Worker_Connection,
+                    }
+
+                    impl WorkerConnection {
+                        pub fn get_op_list(&mut self) -> OpList { ... }
+                    }
+
+                    unsafe impl Send for WorkerConnection {}
+                    unsafe impl Sync for WorkerConnection {}
+                    ```
+                    </textarea>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Speaking of OpList...</h2>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    WORKER_API Worker_OpList* Worker_Connection_GetOpList(
+                        Worker_Connection* connection,
+                        uint32_t timeout_millis);
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    typedef enum Worker_OpType {
+                        WORKER_OP_TYPE_DISCONNECT = 1,
+                        WORKER_OP_TYPE_FLAG_UPDATE = 2,
+                        WORKER_OP_TYPE_LOG_MESSAGE = 3,
+                        WORKER_OP_TYPE_METRICS = 4,
+                        WORKER_OP_TYPE_CRITICAL_SECTION = 5,
+                        WORKER_OP_TYPE_ADD_ENTITY = 6,
+                        WORKER_OP_TYPE_REMOVE_ENTITY = 7,
+                        WORKER_OP_TYPE_RESERVE_ENTITY_ID_RESPONSE = 8,
+                        WORKER_OP_TYPE_RESERVE_ENTITY_IDS_RESPONSE = 9,
+
+                        // ... and so on
+                    } Worker_OpType;
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    typedef struct Worker_Op {
+                        uint8_t op_type;
+
+                        union {
+                            Worker_DisconnectOp disconnect;
+                            Worker_FlagUpdateOp flag_update;
+                            Worker_LogMessageOp log_message;
+                            Worker_MetricsOp metrics;
+                            Worker_CriticalSectionOp critical_section;
+                            Worker_AddEntityOp add_entity;
+
+                            // ... and so on
+                        };
+                    } Worker_Op;
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```csharp
+                    // Get the latest operations
+                    // received by the connection.
+                    var opList = connection.GetOpList(0);
+
+                    // Invoke callbacks.
+                    dispatcher.Process(opList);
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-background-image="images/neutral-face.png" data-background-size="contain"></section>
+
+                <section data-markdown data-background-image="images/party-popper.png" data-background-size="contain"
+                    data-background-position="left">
+                    <textarea data-template>
+                    ```rust
+                    #[derive(Debug)]
+                    pub enum WorkerOp<'a> {
+                        Disconnect(DisconnectOp),
+                        AddEntity(AddEntityOp),
+                        RemoveEntity(RemoveEntityOp),
+                        AddComponent(AddComponentOp<'a>),
+                        RemoveComponent(RemoveComponentOp),
+                        ComponentUpdate(ComponentUpdateOp<'a>),
+                        EntityQueryResponse(EntityQueryResponseOp<'a>),
+
+                        // ... and so on
+                    }
+                    ```
+                    </textarea>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Playing With Pointers</h2>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```c
+                    // Borrowed, read-only data.
+                    typedef struct Worker_ComponentData {
+                        void* reserved;
+                        Worker_ComponentId component_id;
+                        Schema_ComponentData* schema_type;
+                        Worker_ComponentDataHandle* user_handle;
+                    } Worker_ComponentData;
+
+                    // Owned, mutable data.
+                    Schema_ComponentData* Schema_CreateComponentData();
+                    void Schema_DestroyComponentData(Schema_ComponentData* data);
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct SchemaComponentData {
+                        raw: *mut Schema_ComponentData,
+                    }
+
+                    impl SchemaComponentData {
+                        pub fn component_id(&self) -> ComponentId {
+                            Schema_GetComponentDataComponentId(self.raw)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section>
+                    How do we differentiate between <em>owned</em> and <em>borrowed</em> data?
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct SchemaComponentData<'a> {
+                        raw: *mut Schema_ComponentData,
+                        _marker: PhantomData<&'a Schema_ComponentData>,
+                    }
+
+                    impl SchemaComponentData {
+                        pub fn new() -> SchemaComponentData<'static> {
+                            Self {
+                                raw: Schema_CreateComponentData(),
+                                _marker: PhantomData,
+                            }
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown data-background-image="images/circle-with-slash.png"
+                    data-background-size="contain">
+                    <textarea data-template>
+                    ```rust
+                    impl Drop for SchemaComponentData<'static> {
+                        fn drop(&mut self) {
+                            Schema_DestroyComponentData(self.raw);
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-background-image="images/three-weeks-later.jpg" data-background-size="contain"></section>
+
+                <section data-background-image="https://media.giphy.com/media/1SjmCkZsD0Wc0/giphy.gif"
+                    data-background-size="cover"></section>
+
+                <section data-background-image="https://media.giphy.com/media/Q9kgQp6ptfcLS/giphy.gif">
+                    <h2>What if we <em>LIED</em>?</h2>
+                </section>
+
+                <section>
+                    <ul>
+                        <li>The data is completely opaque</li>
+                        <li>We never dereference the pointer</li>
+                        <li>All we care about is the value of the pointer</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <ul>
+                        <li>Sometimes we own the data</li>
+                        <li>Sometimes can mutate the data</li>
+                        <li>Sometimes we can only read the data</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Rust has conventions for this:</p>
+                    <ul>
+                        <li><code>Box&lt;T&gt;</code></li>
+                        <li><code>&mut T</code></li>
+                        <li><code>&T</code></li>
+                    </ul>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct SchemaComponentData;
+
+                    impl SchemaComponentData {
+                        unsafe fn from_raw<'a>(
+                            raw: *mut Schema_ComponentData,
+                        ) -> &'a SchemaComponentData {
+                            &*(raw as *mut _)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    impl SchemaComponentData {
+                        pub fn component_id(&self) -> ComponentId {
+                            let raw = self as *mut _;
+                            Schema_GetComponentDataComponentId(raw)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    impl Object {
+                        pub fn add_object_field(
+                            &mut self,
+                            field: FieldId,
+                        ) -> &mut Object {
+                            let raw = self as *mut _;
+                            let result = Schema_AddObject(raw, field)
+                            &mut *(result as *mut _)
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub trait Ownable {
+                        type Raw;
+                        unsafe fn destroy(me: *mut Self::Raw);
+                    }
+
+                    pub struct Owned<T: Ownable>(*mut T::Raw);
+
+                    impl<T: Ownable> Drop for Owned<T> {
+                        fn drop(&mut self) {
+                            T::destroy(self.0.as_ptr());
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    impl SchemaComponentData {
+                        pub fn new() -> Owned<SchemaComponentData> {
+                            Owned(
+                                Schema_CreateComponentData(),
+                            )
+                        }
+                    }
+
+
+                    impl Ownable for SchemaComponentData {
+                        type Raw = Schema_ComponentData;
+
+                        unsafe fn destroy(inst: *mut Self::Raw) {
+                            Schema_DestroyComponentData(inst);
+                        }
+                    }
+                    ```
+                    </textarea>
+                </section>
+
+                <section>
+                    <h2>One more thing...</h2>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                    ```rust
+                    pub struct SchemaComponentData(
+                        PhantomData<*mut Schema_ComponentData>,
+                    );
+
+                    unsafe impl Send for SchemaComponentData {}
+                    ```
+                    </textarea>
+                </section>
+            </section>
+
+            <section>
+                The End
+            </section>
+        </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+        // More info about config & dependencies:
+        // - https://github.com/hakimel/reveal.js#configuration
+        // - https://github.com/hakimel/reveal.js#dependencies
+        Reveal.initialize({
+            dependencies: [
+                { src: 'plugin/markdown/marked.js' },
+                { src: 'plugin/markdown/markdown.js' },
+                { src: 'plugin/notes/notes.js', async: true },
+                { src: 'plugin/highlight/highlight.js', async: true }
+            ]
+        });
+    </script>
+</body>
+
+</html>
