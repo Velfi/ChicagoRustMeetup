@@ -1,0 +1,775 @@
+<!--
+    + double check macro expansion prints
+    + hygiene rules
+    + how many different types of errors can be get from macro system
+-->
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Rust Macros</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/black.css"><!--tkg_pro.css"> -->
+        <link rel="stylesheet" href="css/theme/tkg_pro.css"> 
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '_css/print/pdf.css' : '._css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+	<section>
+
+      <h3 align="center"><b> Macros rule</b></h3>
+      <h4 align="center"><b> a dive into rust's syntax extension toolbox</b></h4>
+      <h4 align="center">Thoth Gunter</h4>
+      <h4 align="center">@TKGgunter</h4>
+      <h5 align="center" id="date"></h5>
+    </section>
+
+
+    <section>
+        <h3>A Macro is ...</h3>
+        <p> a single instruction that expands into multiple instructions -- The Common Lisp cookbook</p>
+        <p>(When describing macros in assembly environments.)</p>
+        <!--https://lispcookbook.github.io/cl-cookbook/macros.html-->
+    </section>
+
+    <section>
+        <code style="border: 1px solid; padding: 2px; border-color: blue"> //HELPME is a macro
+            let hm = HELPME!();
+        </code>
+        <p></p>
+        <code style="border: 1px solid; padding: 2px; border-color: red"> //expanded macro
+            let hm = {let sfj = somefunny_joke();
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let mut f = 10;
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; somefunc(f) - sfj };
+        </code>
+    </section>
+
+    <section>
+        <h3>Macros offer more than just textual replacement.</h3>
+    </section>
+
+    <section>
+        <h3>Macros in C/C++ <font color="blue">98</font></h3>
+        <code>
+            for(int i=0; i < l.size(); i++){
+        </code>
+    </section>
+
+    <section>
+        <!--
+        <h3>Macros in C/C++</h3>
+        <code>
+            for(int i=0; i < l.size(); i++){
+        </code>
+        <p>-----------------------------------------------------</p>
+        -->
+        <code style="border: 1px solid; border-color: red"> #define FOR_IN(iter, arr) \ 
+            for(int iter=0; iter < arr.size(); iter++) 
+        </code>
+        <p></p>
+        <code style=""> main(){                                     
+            &nbsp;&nbsp;  std::vector<int> myvec = [12, 1, 32, 4];  
+            &nbsp;&nbsp;  FOR_IN(i, myvec){                         
+            &nbsp;&nbsp;&nbsp;&nbsp;  printf("iter: %d : %d", i, i + myvec[i]); 
+            &nbsp;&nbsp;  }                                         
+            } 
+        </code>
+    </section>
+    <section>
+        <h3> Why use macros?  </h3>
+        <ul>
+            <li> Reduction of Redundant Code </li>
+            <li> Fundamentally impact the structure and syntax of the language.
+        </ul>
+        <!-- talk alittle about errors and the preprocessor -->
+    </section>
+
+    <section>
+        <h3> What about rust? </h3>
+        <img src="crab_question1.png">
+    </section>
+
+    <section>
+        <h3> Macros in Rust
+        </h3>
+        <ul>
+            <li> "Macro is a rule or pattern that specifies how a certain input sequence should be mapped to a replacement output sequence." -- wikipedia Macro_(computer_science) 
+            <li> "Macros are a way of writing code that writes other code." -- rust-doc 1.30 appendix 04
+        </ul>
+    </section>
+
+    <section>
+        <h3> Macros in Rust
+        </h3>
+        <ul>
+            <li> "Macro is a rule or pattern that specifies how a certain input sequence should be mapped to a replacement output sequence." -- wikipedia Macro_(computer_science)  
+                <font color="red"> &larr; Declarative Macro </font>
+            <li> "Macros are a way of writing code that writes other code." -- rust-doc 1.30 appendix 04 <font color="red"> &larr; Procedural Macro</font>
+        </ul>
+    </section>
+
+    <section>
+       <h3> The Declarative Macro</h3>
+       <div style="width: 60%; float: right">
+       <code style="font-size: 55%">macro_rules!  <font color="red">(MACRO_NAME)<sup style="font-size: 80%">1</sup> </font>{
+           <font color="red">(MATCH STATEMENT)<sup style="font-size: 80%">2</sup></font> (\{\[ 
+           &nbsp; &nbsp; <font color = "red"> $(VARIABLE NAME)<sup style="font-size: 80%">3</sup></font>:<font color="red">(VARIABLE TYPE)<sup style="font-size: 80%">4</sup></font>,<font color="blue">\(DELIMITER or REPETITION or CUSTOM SYMBOL)</font>  
+           ]\}\) => {
+           &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font color = "red"> $(VARIABLE NAME)<sup style="font-size: 80%">5</sup></font>  //perform some operation
+           &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; };<sup style="font-size: 80%; color: red">6</sup></font> 
+         }
+        </code>
+       </div>
+       <div style="width: 39%; float: left; padding 2px; border: 2px solid; border-color: white">
+           <ol style="font-size: 75%">
+               <li> Define how the macro is identied.
+               <li> Set of patterns to be checked against.
+               <ul style="font-size: 80%">
+                   <li> (), {}, or []
+               </ul>
+               <li> Patterns consit of named tokens and 
+               <li> typed tokens.
+               <li> Replacement code.
+               <li> Ending in a semicolon.
+           </ol>
+           <!--<p style="font-size: 80%"> derived macros can be placed anywhere a function can.</p>-->
+       </div>
+    </section>
+
+    <section>
+    <section>
+        <h3>Starting Simple</h3>
+
+    <div style="float: left; width: 20%">
+    </div>
+    <div style="float: right; width: 80%">
+    <code style="font-size: 60%;">
+    macro_rules! update_and_print {                  
+        ($x:tt)=&gt;{  println!("previous {}", $x);
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;         $x += 1;
+        &nbsp; &nbsp; &nbsp; &nbsp;         };
+        ($x:tt, $y:tt)=&gt;{ println!("previous {} {}", $x, $y);
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;         $x += 1;
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;         $y += 1;
+        &nbsp; &nbsp; &nbsp; &nbsp;         };
+    }
+
+    </code>
+    </div>
+<div style="float:left; width: 49%; border: 1px solid; border-color:blue; padding: 3px">
+    <p>Original Code</p>
+    <code style="font-size: 55%">
+    let mut a = 10;
+    let mut b = 10;
+    update_and_print!(a);
+    update_and_print!(a, b);
+
+    </code>
+</div>
+<div style="float:right; width: 49%; border: 1px solid; border-color:red; padding: 3px">
+    <p>Expanded Code</p>
+    <code  style="font-size: 55%">
+    println!("previous {}", a); 
+    a += 1; 
+    println!("previous {} {}", a, b); 
+    a += 1; 
+    b += 1; 
+    </code>
+</div>
+    </section>
+
+        <section>
+            <h3> Errors </h3>
+            <code style="font-size: 65%">
+update_and_print!();
+<font color="red">^^^^^^^^^^^^^^^^^^^^ missing tokens in macro arguments </font>
+
+update_and_print!(a);
+<font color="red">------------------^--
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;     `CustonType` cannot be formatted with the default formatter
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      in this macro invocation </font>
+
+
+update_and_print!(a, b, c);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font color="red">^ no rules expected this token in macro call </font>
+            </code>
+        </section>
+    </section>
+
+    <section>
+        <section>
+            <h3>Macro types </h3>
+            <ul style="font-size:70%">
+                <li>item: an item ( function, struct, module, etc)
+                <li>block: a block e.g. <mono>{}</mono> of statements or expressions, e.g., <mono>{ let x = 5; }</mono>
+                <li>stmt: a statement e.g., <mono>let x = 1 + 1; </mono>, <mono>String::new();</mono> or <mono>vec![]; </mono>
+                <li>pat: a pattern e.g.,  <mono>Some(true)</mono>, <mono>(17, 'a')</mono>, or <mono> _ </mono>
+                <li>expr: an expression  e.g., <mono>x</mono>, <mono>1 + 1</mono>, <mono>String::new()</mono> or <mono>vec![]</mono>
+                <li>ty: a type e.g., <mono>String</mono>, <mono>usize</mono> or <mono>Vec<u8></mono>. 
+                <li>ident: an identifier e.g. for example in <mono>let x = 0;</mono> the identifier is <mono>x</mono>.
+                <li>path: a path e.g. <mono>foo</mono>, <mono>::std::mem::replace </mono>, <mono>transmute::<_, int></mono>, …
+                <li>meta: a meta item; the things that go inside <mono>#[...]</mono> and <mono>#![...]</mono> attributes
+                <li>tt: a single token tree 
+                <li>lifetime: a lifetime token e.g. <mono>'a</mono>
+                <li>vis: visibility qualifier e.g. <mono>pub</mono>, <mono>pub(crate)</mono>
+                <li>literal: hard coded floats, ints, chars and strings 
+            </ul>
+
+            <h4>Repetition Signifier</h4>
+            <ul style="font-size:70%">
+                <li> * ( zero or more repetition)
+                <li> + (one or more repetitions)
+                <li> ? (zero or one instances)
+            </ul>
+            <p style="font-size: 50%">https://doc.rust-lang.org/1.30.0/book/first-edition/macros.html</p>
+        </section>
+
+        <section>
+            <h3>Example</h3>
+                <li>item: an item ( function, struct, module, etc)
+                <li>block: a block e.g. <mono>{}</mono> of statements or expressions, e.g., <mono>{ let x = 5; }</mono>
+                <li>stmt: a statement e.g., <mono>let x = 1 + 1; </mono>, <mono>String::new();</mono> or <mono>vec![]; </mono>
+        </section>
+
+        <section>
+            <h3>Example</h3>
+                <li>pat: a pattern e.g.,  <mono>Some(true)</mono>, <mono>(17, 'a')</mono>, or <mono> _ </mono>
+                <li>expr: an expression  e.g., <mono>x</mono>, <mono>1 + 1</mono>, <mono>String::new()</mono> or <mono>vec![]</mono>
+                <li>ty: a type e.g., <mono>String</mono>, <mono>usize</mono> or <mono>Vec<u8></mono>. 
+        </section>
+
+        <section>
+            <h3>Example</h3>
+                <li>ident: an identifier e.g. for example in <mono>let x = 0;</mono> the identifier is <mono>x</mono>.
+                <li>path: a path e.g. <mono>foo</mono>, <mono>::std::mem::replace </mono>, <mono>transmute::<_, int></mono>, …
+                <li>meta: a meta item; the things that go inside <mono>#[...]</mono> and <mono>#![...]</mono> attributes
+        </section>
+
+        <section>
+            <h3>Example</h3>
+            <li>tt: a single token tree
+            <li>lifetime: a lifetime token
+            <li>vis: visibility qualifier
+            <li>literal: hard coded floats, ints, chars and strings 
+        </section>
+    </section>
+
+    <section>
+        <h3>Your all pros now</h3>
+        <img src="https://media.giphy.com/media/3ohc0RFN5bMT4CjRcY/giphy.gif">
+        <!-- describe what we are trying to accomplish  in this example -->
+    </section>
+
+
+    <section>
+<code style="font-size: 60%">
+macro_rules! math{
+    &nbsp; &nbsp;($x:literal ^ $y:literal )=>{
+    &nbsp; &nbsp;&nbsp; &nbsp;     ($x as f32).powf($y as f32)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($x:literal ^ $y:literal $sym:tt $($expression:tt)* )=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     ($x as f32).powf($y as f32) $sym math!($($expression)*)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($x:literal $sym:tt $($expression:tt)* )=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     $x as f32 $sym math!($($expression)*)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($sym:tt $x:literal $($expression:tt)* )=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     $sym $x as f32 math!($($expression)*)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($x:literal)=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     $x as f32
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;()=>{};
+}
+</code>
+    </section>
+
+
+    <section>
+        <div style="width: 50%; float: left">
+<code style="font-size: 60%">
+macro_rules! math{
+    &nbsp; &nbsp;($x:literal ^ $y:literal )=>{
+    &nbsp; &nbsp;&nbsp; &nbsp;     ($x as f32).powf($y as f32)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($x:literal ^ $y:literal $sym:tt $($expression:tt)* )=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     ($x as f32).powf($y as f32) $sym math!($($expression)*)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($x:literal $sym:tt $($expression:tt)* )=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     $x as f32 $sym math!($($expression)*)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($sym:tt $x:literal $($expression:tt)* )=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     $sym $x as f32 math!($($expression)*)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($x:literal)=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     $x as f32
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;()=>{};
+}
+</code>
+        </div>
+        <div style="width: 50%; float: right">
+            <p style="font-size: 80%">Allows user to input simple mathematical expressions of numeral literals and calculates the results. </br>
+            It take a mixed of integer and float types and converts all inputs to float. </br></p>
+            <code style="font-size: 60%; border: 1px solid; border-color: blue"> let example = math!(1 + 23.42^2.3);
+            </code>
+            <p></p>
+            <code style="font-size: 60%; border: 1px solid; border-color: red"> //Expansion
+                let example = 1 as f32 + (23.42 as f32).powf(2.3 as f32);
+            </code>
+        </div>
+    </section>
+
+
+
+
+    <section>
+        <section>
+            <h3>What happens here?</h3>
+            <code style="font-size: 65%; border: 2px solid; padding: 5px; border-color: yellow"> let example = math!( 13.4 * (1.2^23 + 12) + 23.42^2.3);
+            </code>
+            <code style="font-size: 65%; color:white">
+                //ERROR
+                  --> main02.rs:32:46
+                  &nbsp; &nbsp;|
+                  10 | macro_rules! math{
+                  &nbsp; &nbsp;| ----------------- when calling this macro
+                      ...
+                  32 |     println!("{}", math!( 13.4 * (1.2^23 + 12) + 23 / 3.14^2));
+                  &nbsp; &nbsp;| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ^ no rules expected this token in macro call
+
+            </code>
+        </section>
+
+        <section>
+            <h3>What happens here?</h3>
+            <code style="font-size: 65%; border: 2px solid; padding: 5px; border-color: yellow"> let example = math!( 13.4 * (1.2^23 + 12) + 23.42^2.3);
+            </code>
+<code style="font-size: 60%">
+macro_rules! math{
+    &nbsp; &nbsp;($x:literal ^ $y:literal )=>{
+    &nbsp; &nbsp;&nbsp; &nbsp;     ($x as f32).powf($y as f32)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($x:literal ^ $y:literal $sym:tt $($expression:tt)* )=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     ($x as f32).powf($y as f32) $sym math!($($expression)*)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($x:literal $sym:tt $($expression:tt)* )=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     $x as f32 $sym math!($($expression)*)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($sym:tt $x:literal $($expression:tt)* )=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     $sym $x as f32 math!($($expression)*)
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;($x:literal)=&gt;{
+    &nbsp; &nbsp;&nbsp; &nbsp;     $x as f32
+    &nbsp; &nbsp;};
+    &nbsp; &nbsp;()=>{};
+}
+</code>
+        </section>
+    </section>
+
+
+    <section>
+        <h3>What happens here?</h3>
+        <code style="font-size: 65%; border: 2px solid; padding: 5px; border-color: yellow"> let example = math!( 13.4 * (1.2^23 + 12) + 23.42^2.3);
+        </code>
+        <code style="font-size: 65%;">
+            <font color="red">!!ERROR!!</font>
+              --> main02.rs:32:46
+              &nbsp; &nbsp;|
+              10 | macro_rules! math{
+              &nbsp; &nbsp;| ----------------- when calling this macro
+                  ...
+              32 |     println!("{}", math!( 13.4 * (1.2^23 + 12) + 23 / 3.14^2));
+              &nbsp; &nbsp;| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; <font color="red"> ^ no rules expected this token in macro call </font>
+
+        </code>
+    </section>
+
+    <section>
+        <h3>Debugging tools (only using nightly compiler)</h3>
+        <p style="font-size: 80%"> Expanding macros with the nightly compiler and checking source code is probably the best way to go when debugging macros.
+        </p>
+        <code style="font-size: 70%; align: center"> rustup default nightly 
+        rustup default stable </code>
+
+        <p></p>
+            <b>(cargo) rustc</b>
+            <code style="font-size: 50%"> (cargo) rustc -Zunstable-options --pretty=expanded </code>
+            <p style="font-size:70%">AND/OR</p>
+            <code style="font-size: 50%"> #![feature(trace_macros)]
+                fn main(){
+                &nbsp; &nbsp;    trace_macros!(true);
+                &nbsp; &nbsp;     ...
+                &nbsp; &nbsp;     trace_macros!(false);
+                }
+            </code>
+    </section>
+    <section>
+        <h3>Debugging tools (only using nightly compiler)</h3>
+        <code style="font-size: 65%; border: 2px solid; padding: 5px; border-color: yellow"> let example = math!( 13.4 * (1.2^23 + 12) 23.42^2.3);
+        </code>
+        <code style="font-size: 65%">
+            //Trace macro exapansion
+               = note: expanding `math! { 13.4 + (1.2 ^ 23 + 12) + 23.42 ^ 2.3 }`
+               = note: to `13.4 as f32 + math ! ((1.2 ^ 23 + 12) + 23.42 ^ 2.3)`
+               = note: expanding `math! { (1.2 ^ 23 + 12) + 23.42 ^ 2.3 }`
+
+        </code>
+    </section>
+
+
+
+    <section>
+        <h3>Procedural Macros</h3>
+        <i> are a way of writing rust code that writes rust code. </i>
+    </section>
+
+    <section>
+        <h3>Procedural Macros</h3>
+        <p style="border:2px solid; border-color: white; font-size: 110%"> <i>Compiler extension.</i></p>
+        <div style="width: 50%; float: left">
+            <h4>Differences from declarative macros </h4>
+            <ul style="font-size: 80%"> 
+              <li>Defined in seperate crate. 
+              <li> Not pattern based.  
+              <li> Direct interaction with token streams.
+            </ul>
+        </div>
+        <div style="width: 50%; float: left">
+            <h4>Pros </h4>
+            <ul style="font-size: 80%"> 
+                <li> Custom error messages.
+                <li> Working with the langauge you use everyday
+            </ul>
+        </div>
+    </section>
+    <section>
+        <h3>Setting up a proc marco </h3>
+        <p>SETUP: cargo toml and rustc</p>
+        <div style="float: left; width: 50%">
+            <b>Cargo junky (cargo)</b>
+            <code style="font-size: 80%">
+                #CARGO.TOML
+                [lib]
+                proc-macro = true
+            </code>
+        </div>
+        <div style="float: left; width: 50%">
+            <b>One Off (rustc) </b>
+            <code style="font-size: 80%">
+                // if using rustc be sure 
+                // the following heads your .rs lib file.
+                #![crate_type = "proc-macro"]
+            </code>
+        </div>
+        <p style="clear: both; border-bottom: 1px solid">  </p>
+        <code style="font-size: 90%"> //src.rs
+extern crate proc_macro;
+use proc_macro::TokenStream;
+
+#[proc_macro]
+pub fn macro_name( _sts: TokenStream) -> TokenStream {
+        </code>
+    </section>
+
+    <section>
+    <section>
+        <h3>Simple Example </h3>
+        <code style="font-size: 70%; border: 2px solid; border-color: red"> //testlibproc_macro
+extern crate proc_macro;
+use proc_macro::TokenStream;
+
+#[proc_macro]
+pub fn macro_name( _sts: TokenStream) -> TokenStream {
+&nbsp;  &nbsp;  "fn test_fn()-> f32 { 23.23 }".parse().unwrap()
+}
+        </code>
+        <p>&nbsp;</p>
+        <code style="font-size: 70%; border: 2px solid; border-color: blue"> extern crate testlibproc_macro;
+use proc_lib::macro_name;
+
+macro_name!(); //Expands to fn test_fn()->f32 { 23.23 }
+
+fn main(){
+&nbsp;  &nbsp;     let test = test_fn();
+&nbsp;  &nbsp;     println!("test {}", test);
+}
+        </code>
+
+    </section>
+
+        <section>
+        <code style="font-size: 70%; border: 2px solid; border-color: red"> //testlibproc_macro
+#[proc_macro]
+pub fn macro_name( _sts: TokenStream) -> TokenStream {
+&nbsp;  &nbsp;  println!("Hello World.")
+&nbsp;  &nbsp;  "fn test_fn()-> f32 { 23.23 }".parse().unwrap()
+}
+        </code>
+        <p></p>
+        <code style="font-size: 70%; border: 2px solid; border-color: black; background-color:black; color: white"> Compiling example v0.1.0 (/example)
+            <font color="blue">Hello World </font>
+    Finished dev [unoptimized + debuginfo] target(s) in 0.61s
+         Running `target/debug/example`
+         test 42
+
+        </code>
+        </section>
+    </section>
+
+    <section>
+        <h3>messing with tokens (proc_macro lib)</h3>
+        <p>
+        TokenStream is made up of TokenTree(s). </br>
+        TokenTree is an enum.
+        </p>
+        <ul>
+            <li>Group(Group) </br>
+            A token stream surrounded by bracket delimiters.
+
+            <li>Ident(Ident) </br>
+            An identifier.
+
+            <li>Punct(Punct) </br>
+            A single punctuation character (+, ,, $, etc.).
+
+            <li>Literal(Literal) </br>
+            A literal character ('a'), string ("hello"), number (2.3), etc.
+        </ul>
+    </section>
+
+    <section>
+    <section>
+        <h3>Complex Example</h3>
+<div style="float: left; width: 50%">
+        <code style="font-size: 28%; white-space: pre">extern crate proc_macro;
+use proc_macro::TokenStream;
+
+#[proc_macro]
+pub fn math(expression: TokenStream)->TokenStream{
+    use proc_macro::TokenTree;
+
+    let mut output_string = String::new();
+    let mut open_brackets = 0;
+    let mut pre_index = 0;
+    for it in expression.into_iter(){
+        match it{
+            TokenTree::Group(group)=>{ 
+                output_string += "( ";
+                let ts = math(group.stream());
+                output_string += &ts.to_string();
+                output_string += " ) ";
+            },
+            TokenTree::Ident(ident)=>{
+                pre_index = output_string.len();
+                output_string += &format!(" {} as f32 ", ident.to_string() );
+                if open_brackets > 0 {
+                    output_string += ") ";
+                    open_brackets -= 1;
+                }
+            },
+            TokenTree::Literal(literal)=>{
+                pre_index = output_string.len();
+                output_string += &format!(" {} as f32 ", literal.to_string() );
+                if open_brackets > 0 {
+                    output_string += ") ";
+                    open_brackets -= 1;
+                }
+            },
+            TokenTree::Punct(punct)=>{
+                let _char = punct.as_char();
+                match _char{
+                    '+' => { output_string += "+";},
+                    '-' => { output_string += "-";},
+                    '/' => { output_string += "/";},
+                    '^' => { 
+                        open_brackets += 1;
+                        output_string += " ).powf(";
+                        output_string.insert(pre_index, '(');
+                    },
+                    '*' => { output_string += "*";},
+                    _   => {panic!("Not implemented! symbol unknown");}
+                }
+            },
+            _=>{panic!("Error unsupported tokentree");}
+        }
+    }
+    match output_string.parse(){
+        Ok(ts) =>  ts,
+        Err(e) => panic!(format!("{:?}", e))
+    }
+}
+        </code>        
+</div>
+<div style="float:right; width:50%">
+</div>
+    </section>
+
+		<section>
+        <h3>Complex Example</h3>
+<div style="float: left; width: 50%">
+        <code style="font-size: 28%; white-space: pre">extern crate proc_macro;
+use proc_macro::TokenStream;
+
+#[proc_macro]
+pub fn math(expression: TokenStream)->TokenStream{
+    use proc_macro::TokenTree;
+
+    let mut output_string = String::new();
+    let mut open_brackets = 0;
+    let mut pre_index = 0;
+    for it in expression.into_iter(){
+        match it{
+            TokenTree::Group(group)=>{ 
+                output_string += "( ";
+                let ts = math(group.stream());
+                output_string += &ts.to_string();
+                output_string += " ) ";
+            },
+            TokenTree::Ident(ident)=>{
+                pre_index = output_string.len();
+                output_string += &format!(" {} as f32 ", ident.to_string() );
+                if open_brackets > 0 {
+                    output_string += ") ";
+                    open_brackets -= 1;
+                }
+            },
+            TokenTree::Literal(literal)=>{
+                pre_index = output_string.len();
+                output_string += &format!(" {} as f32 ", literal.to_string() );
+                if open_brackets > 0 {
+                    output_string += ") ";
+                    open_brackets -= 1;
+                }
+            },
+            TokenTree::Punct(punct)=>{
+                let _char = punct.as_char();
+                match _char{
+                    '+' => { output_string += "+";},
+                    '-' => { output_string += "-";},
+                    '/' => { output_string += "/";},
+                    '^' => { 
+                        open_brackets += 1;
+                        output_string += " ).powf(";
+                        output_string.insert(pre_index, '(');
+                    },
+                    '*' => { output_string += "*";},
+                    _   => {panic!("Not implemented! symbol unknown");}
+                }
+            },
+            _=>{panic!("Error unsupported tokentree");}
+        }
+    }
+    match output_string.parse(){
+        Ok(ts) =>  ts,
+        Err(e) => panic!(format!("{:?}", e))
+    }
+}
+        </code>        
+</div>
+<div style="float:right; width:50%">
+	<p style="font-size:80%">In ~60 lines of code we have a more robust macro that is potentially easier to debug. </p>
+	<p style="font-size:50%">Command line args can be used from proc_macros</p>
+
+	<code style="white-space:pre; font-size: 40%; border: 2px solid; padding: 5px">
+#![feature(proc_macro_hygiene)]
+extern crate proc_lib;
+use proc_lib::*;
+
+
+fn main() {
+
+    let x = math!( 2.3 ^ 10 - 4);
+    assert_eq!(2.3_f32.powf(10.0) - 4.0, x);
+
+    let y = 42;
+    let x = math!(1 + 1.0 / y);
+    assert_eq!(1.0 + 1.0/ 42.0, x);
+
+
+    let x = math!( 5.2 * (1 + 4) - 43);
+    assert_eq!(5.2 * (1.0 + 4.0) - 43.0, x);
+}
+	</code>
+</div>
+		</section>
+    </section>
+
+
+    <section>
+        <h3>everything not covered</h3>
+<div style=" float: left; width: 50%">
+    <h4>Additional Ideas</h4>
+	<ul style="font-size: 90%">
+		<li>pattern precedence
+		<li>hygiene
+		<li>Derive macros
+		<li>Attribute macros
+	</ul>
+</div>
+<div style=" float: right; width: 50%">
+    <h4>Additional Tools</h4>
+	<ul style="font-size: 75%">
+		<li>proc-macro2 crate </br>
+		is a re-implementation of the proc-macro std crate 
+		<li> quote crate </br>
+		is a quasi quote 
+		<li>syn crate </br>
+		is a parsing library that allows easy pattern matching.
+	</ul>
+</div>
+    </section>
+
+    <section>
+        <h3>Questions?</h3>
+    </section>
+
+      </div>
+    </div>
+
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+        		slideNumber: true,
+        width: 1280,
+        <!-- //height: 1050,//720,//820 -->
+        height: 820,
+        math: {
+        	mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+            config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+                    <!--{ src: 'plugin/math/math.js', async: true },-->
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/date-time/date-time.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
