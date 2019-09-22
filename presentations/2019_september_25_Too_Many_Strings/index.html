@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Too Many Strings in Rust</title>
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Why are there like seventy different kinds of strings in Rust???</h1>
+            </section>
+
+            <section>
+                <h3>Disclaimer: Memory Management</h3>
+                <p>Assumption: You need to allocate memory to handle dynamically-sized data.</p>
+            </section>
+
+            <section>
+                <h2>String Types</h2>
+                <ul>
+                    <li class="fragment"><code>String</code></li>
+                    <li class="fragment"><code>&str</code></li>
+                    <li class="fragment"><code>&'static str</code>???</li>
+                    <li class="fragment"><code>OsString</code></li>
+                    <li class="fragment"><code>OsStr</code></li>
+                    <li class="fragment"><code>CString</code></li>
+                    <li class="fragment"><code>CStr</code></li>
+                    <li class="fragment"><code>Path</code></li>
+                    <li class="fragment"><code>PathBuf</code></li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Basic Strings</h2>
+                <ul>
+                    <li><code>String</code></li>
+                    <li><code>&str</code></li>
+                    <li><code>&'static str</code>???</li>
+                </ul>
+            </section>
+
+            <section>
+                <section>
+                    <h2>How It Usually Goes</h2>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    let my_string = "Hello, World!";
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    pub fn print_string(string: &str) {
+                        println!("Printing string: {}", string);
+                    }
+
+                    let my_string = "Hello, World!";
+                    print_string(my_string);
+                    </code></pre>
+                </section>
+            </section>
+        </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+        // More info about config & dependencies:
+        // - https://github.com/hakimel/reveal.js#configuration
+        // - https://github.com/hakimel/reveal.js#dependencies
+        Reveal.initialize({
+            dependencies: [
+                { src: 'plugin/markdown/marked.js' },
+                { src: 'plugin/markdown/markdown.js' },
+                { src: 'plugin/notes/notes.js', async: true },
+                { src: 'plugin/highlight/highlight.js', async: true }
+            ],
+            hash: true,
+        });
+    </script>
+</body>
+
+</html>
