@@ -73,12 +73,90 @@
 
                 <section>
                     <pre><code class="rust" data-trim data-noescape>
-                    pub fn print_string(string: &str) {
+                    fn print_string(string: &str) {
                         println!("Printing string: {}", string);
                     }
 
                     let my_string = "Hello, World!";
                     print_string(my_string);
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    struct MyStruct {
+                        my_string: &str,
+                    }
+                    </code></pre>
+
+                    <pre><code class="plaintext" data-trim data-noescape>
+                    error[E0106]: missing lifetime specifier
+                     --> src/main.rs:2:13
+                      |
+                    2 |     string: &str,
+                      |             ^ expected lifetime parameter
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    struct MyStruct {
+                        my_string: String,
+                    }
+
+                    impl MyStruct {
+                        pub fn new(string: &str) -> MyStruct {
+                            MyStruct {
+                                my_string: string,
+                            }
+                        }
+                    }
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="stretch plaintext" data-trim data-noescape>
+                    error[E0308]: mismatched types
+                     --> src/main.rs:8:24
+                      |
+                    8 |             my_string: string,
+                      |                        ^^^^^^
+                      |                        |
+                      |                        expected struct `std::string::String`, found &str
+                      |                        help: try using a conversion method: `string.to_string()`
+                      |
+                      = note: expected type `std::string::String`
+                                 found type `&str`
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    impl MyStruct {
+                        pub fn new(string: String) -> MyStruct {
+                            MyStruct {
+                                my_string: string,
+                            }
+                        }
+                    }
+
+                    let my_struct = MyStruct::new("Hello, World!");
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="stretch plaintext" data-trim data-noescape>
+                    error[E0308]: mismatched types
+                      --> src/main.rs:14:31
+                       |
+                    14 | let my_struct = MyStruct::new("Hello, World!");
+                       |                               ^^^^^^^^^^^^^^^
+                       |                               |
+                       |                               expected struct `std::string::String`, found reference
+                       |                               help: try using a conversion method: `"Hello, World!".to_string()`
+                       |
+                       = note: expected type `std::string::String`
+                                  found type `&'static str`
                     </code></pre>
                 </section>
             </section>
