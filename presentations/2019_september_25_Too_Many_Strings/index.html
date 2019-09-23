@@ -160,6 +160,63 @@
                     </code></pre>
                 </section>
             </section>
+
+            <section>
+                <h2>Two Sources of Confusion</h2>
+                <ul>
+                    <li>Memory management/ownership</li>
+                    <li>Dealing with UTF-8</li>
+                </ul>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Memory and Ownership</h2>
+                </section>
+
+                <section>
+                    <h2>Rust only has <strong>one</strong> string type</h2>
+                    <p><code>&str</code></p>
+                    <p>(pronounced "string slice")</p>
+                </section>
+
+                <section>
+                    <p>Borrowed array of bytes containing valid UTF-8</p>
+                    <p>Those bytes must exist somewhere in order to be borrowed</p>
+                </section>
+
+                <section>
+                    <h3>String Literals</h3>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string: &'static str = "Hello!";
+                    </code></pre>
+                    <p>
+                        String literals are just string slices. The bytes are "owned" by the application binary and live
+                        forever, hence the <code>'static</code>
+                        lifetime.
+                    </p>
+                </section>
+
+                <section>
+                    <h3>Dynamic Strings</h3>
+                    <p><code>std</code> adds allocation</p>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input).unwrap();
+                    println!("User input: {}", input);
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3><code>String</code></h3>
+                    <ul>
+                        <li>Allocates space in memory.</li>
+                        <li>Owns the allocated memory.</li>
+                        <li>Allows you to borrow a <code>&str</code> from the allocated bytes.</li>
+                        <li>Provides a safe API for building a valid <code>str</code>.</li>
+                    </ul>
+                </section>
+            </section>
         </div>
     </div>
 
