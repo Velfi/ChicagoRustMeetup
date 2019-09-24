@@ -162,7 +162,14 @@
             </section>
 
             <section>
-                <h2>Two Sources of Confusion</h2>
+                <p>This is where people usually say</p>
+                <blockquote>
+                    Why can't Rust make strings easy like they are in <code>$LANG</code>???
+                </blockquote>
+            </section>
+
+            <section>
+                <h2>Two Major Differences</h2>
                 <ul>
                     <li>Memory management/ownership</li>
                     <li>Dealing with UTF-8</li>
@@ -215,6 +222,57 @@
                         <li>Allows you to borrow a <code>&str</code> from the allocated bytes.</li>
                         <li>Provides a safe API for building a valid <code>str</code>.</li>
                     </ul>
+                </section>
+            </section>
+
+            <section>
+                <h2>Why is Rust like this?</h2>
+
+                <ul>
+                    <li class="fragment">Rust is performance-conscious</li>
+                    <li class="fragment">Rust is explicit</li>
+                    <li class="fragment">Rust gives you control</li>
+                </ul>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Example: Building Strings</h3>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    assert_eq!("Hello, " + "World!", "Hello, World!");
+                    </code></pre>
+
+                    <pre><code class="plaintext" data-trim data-noescape>
+                    error[E0369]: binary operation `+` cannot be applied to type `&str`
+                     --> src/main.rs:2:26
+                      |
+                    2 |     assert_eq!("Hello, " + "World!", "Hello, World!");
+                      |                --------- ^ -------- &str
+                      |                |         |
+                      |                |         `+` cannot be used to concatenate two `&str` strings
+                      |                &str
+                    help: `to_owned()` can be used to create an owned `String` from a string reference. String concatenation appends the string on the right to the string on the left and may require reallocation. This requires ownership of the string on the left
+                      |
+                    2 |     assert_eq!("Hello, ".to_owned() + "World!", "Hello, World!");
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    "Hello, ".to_owned() + "World!"
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let mut my_string = String::new();
+                    for item in some_list {
+                        my_string = my_string + ", " + item;
+                    }
+                    </code></pre>
                 </section>
             </section>
         </div>
