@@ -199,8 +199,7 @@
                     </code></pre>
                     <p>
                         String literals are just string slices. The bytes are "owned" by the application binary and live
-                        forever, hence the <code>'static</code>
-                        lifetime.
+                        forever, hence the <code>'static</code> lifetime.
                     </p>
                 </section>
 
@@ -272,6 +271,31 @@
                     for item in some_list {
                         my_string = my_string + ", " + item;
                     }
+                    println!("{}", item);
+                    </code></pre>
+                    <p>This is <code>O(n^2)</code> in most languages, but it's <code>O(n)</code>in Rust</p>
+                </section>
+
+                <section>
+                    <p>Other languages have to introduce a separate string type to give you control when it matters:</p>
+                    <pre><code class="c#" data-noescape data-trim>
+                    var builder = new StringBuilder();
+                    foreach (var item in someList)
+                    {
+                        builder.Append(", ").Append(item);
+                    }
+                    Console.WriteLine(builder);
+                    </code></pre>
+                </section>
+
+                <section>
+                    <p>String copies are also explicit in Rust:</p>
+                    <pre><code class="c#" data-noescape data-trim>
+                    let my_string = String::from("Hello");
+                    let another_string = my_string.clone() + ", World!";
+
+                    assert_eq!(my_string, "Hello");
+                    assert_eq!(another_string, "Hello, World!");
                     </code></pre>
                 </section>
             </section>
