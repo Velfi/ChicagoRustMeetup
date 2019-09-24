@@ -290,7 +290,7 @@
 
                 <section>
                     <p>String copies are also explicit in Rust:</p>
-                    <pre><code class="c#" data-noescape data-trim>
+                    <pre><code class="rust" data-noescape data-trim>
                     let my_string = String::from("Hello");
                     let another_string = my_string.clone() + ", World!";
 
@@ -298,6 +298,89 @@
                     assert_eq!(another_string, "Hello, World!");
                     </code></pre>
                 </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>UTF-8</h2>
+                    <p class="fragment">oh god why</p>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    assert_eq!("🤦🏼‍♂️".len(), 17);
+                    </code></pre>
+
+                    <p class="fragment">
+                        Please read <a href="https://hsivonen.fi/string-length/">https://hsivonen.fi/string-length/</a>
+                    </p>
+
+                    <p class="fragment">oh god it's so complicated</p>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string = "Hello";
+                    let first_letter = my_string[0];
+                    assert_eq(first_letter, 'H');
+                    </code></pre>
+
+                    <pre><code class="plaintext" data-trim data-noescape>
+                    error[E0277]: the type `str` cannot be indexed by `{integer}`
+                     --> src/main.rs:3:24
+                      |
+                    3 |     let first_letter = my_string[0];
+                      |                        ^^^^^^^^^^^^ string indices are ranges of `usize`
+                      |
+                      = help: the trait `std::slice::SliceIndex<str>` is not implemented for `{integer}`
+                      = note: you can use `.chars().nth()` or `.bytes().nth()`
+                              see chapter in The Book <https://doc.rust-lang.org/book/ch08-02-strings.html#indexing-into-strings>
+                      = note: required because of the requirements on the impl of `std::ops::Index<{integer}>` for `str`
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string = "Hello";
+                    let first_letter = &my_string[0..1];
+                    assert_eq(first_letter, 'H');
+                    </code></pre>
+
+                    <pre><code class="plaintext" data-trim data-noescape>
+                    error[E0277]: can't compare `&str` with `char`
+                     --> src/main.rs:4:5
+                      |
+                    4 |     assert_eq!(first_letter, 'H');
+                      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ no implementation for `&str == char`
+                      |
+                      = help: the trait `std::cmp::PartialEq<char>` is not implemented for `&str`
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string = "Hello";
+                    let first_letter = my_string.chars().nth(0).unwrap();
+                    assert_eq!(first_letter, 'H');
+                    </code></pre>
+                </section>
+
+                <section>
+                    <p>There are many, many examples of things that seem easy in other languages but are way
+                        complicated in Rust</p>
+                </section>
+            </section>
+
+            <section>
+                <h2>Here's the thing...</h2>
+                <p class="fragment">Strings are hard, actually</p>
+            </section>
+
+            <section>
+                <ul>
+                    <li>Rust cares about correctness</li>
+                    <li>Rust cares about consistency</li>
+                </ul>
             </section>
         </div>
     </div>
