@@ -37,30 +37,6 @@
             </section>
 
             <section>
-                <h2>String Types</h2>
-                <ul>
-                    <li class="fragment"><code>String</code></li>
-                    <li class="fragment"><code>&str</code></li>
-                    <li class="fragment"><code>&'static str</code>???</li>
-                    <li class="fragment"><code>OsString</code></li>
-                    <li class="fragment"><code>OsStr</code></li>
-                    <li class="fragment"><code>CString</code></li>
-                    <li class="fragment"><code>CStr</code></li>
-                    <li class="fragment"><code>Path</code></li>
-                    <li class="fragment"><code>PathBuf</code></li>
-                </ul>
-            </section>
-
-            <section>
-                <h2>Basic Strings</h2>
-                <ul>
-                    <li><code>String</code></li>
-                    <li><code>&str</code></li>
-                    <li><code>&'static str</code>???</li>
-                </ul>
-            </section>
-
-            <section>
                 <section>
                     <h2>How It Usually Goes</h2>
                 </section>
@@ -89,7 +65,7 @@
                     }
                     </code></pre>
 
-                    <pre><code class="plaintext" data-trim data-noescape>
+                    <pre><code class="clean" data-trim data-noescape>
                     error[E0106]: missing lifetime specifier
                      --> src/main.rs:2:13
                       |
@@ -115,7 +91,7 @@
                 </section>
 
                 <section>
-                    <pre><code class="stretch plaintext" data-trim data-noescape>
+                    <pre><code class="clean" data-trim data-noescape>
                     error[E0308]: mismatched types
                      --> src/main.rs:8:24
                       |
@@ -145,7 +121,7 @@
                 </section>
 
                 <section>
-                    <pre><code class="stretch plaintext" data-trim data-noescape>
+                    <pre><code class="markdown" data-trim data-noescape>
                     error[E0308]: mismatched types
                       --> src/main.rs:14:31
                        |
@@ -162,10 +138,29 @@
             </section>
 
             <section>
-                <p>This is where people usually say</p>
+                <h2>String Types</h2>
+                <ul>
+                    <li class="fragment"><code>String</code></li>
+                    <li class="fragment"><code>&str</code></li>
+                    <li class="fragment"><code>&'static str</code>(???)</li>
+                    <li class="fragment"><code>OsString</code></li>
+                    <li class="fragment"><code>OsStr</code></li>
+                    <li class="fragment"><code>CString</code></li>
+                    <li class="fragment"><code>CStr</code></li>
+                    <li class="fragment"><code>Path</code></li>
+                    <li class="fragment"><code>PathBuf</code></li>
+                </ul>
+            </section>
+
+            <section>
                 <blockquote>
-                    Why can't Rust make strings easy like they are in <code>$LANG</code>???
+                    Q: Why can't Rust make strings easy like they are in <code>$LANG</code>???
                 </blockquote>
+                <p class="fragment">A: Because rust has different goals than <code>$LANG</code></p>
+            </section>
+
+            <section>
+                <p>Strings highlight a lot of the ways Rust differs from other programming languages</p>
             </section>
 
             <section>
