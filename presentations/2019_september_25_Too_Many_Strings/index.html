@@ -1,0 +1,491 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Too Many Strings in Rust</title>
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Why are there like seventy different kinds of strings in Rust???</h1>
+            </section>
+
+            <section>
+                <h3>Disclaimer: Memory Management</h3>
+                <p>Assumption: You need to allocate memory to handle dynamically-sized data</p>
+            </section>
+
+            <section>
+                <section>
+                    <h2>How It Usually Goes</h2>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    let my_string = "Hello, World!";
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    fn print_string(string: &str) {
+                        println!("Printing string: {}", string);
+                    }
+
+                    let my_string = "Hello, World!";
+                    print_string(my_string);
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    struct MyStruct {
+                        my_string: &str,
+                    }
+                    </code></pre>
+
+                    <pre><code class="text" data-trim data-noescape>
+                    error[E0106]: missing lifetime specifier
+                     --> src/main.rs:2:13
+                      |
+                    2 |     string: &str,
+                      |             ^ expected lifetime parameter
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    struct MyStruct {
+                        my_string: String,
+                    }
+
+                    impl MyStruct {
+                        pub fn new(string: &str) -> MyStruct {
+                            MyStruct {
+                                my_string: string,
+                            }
+                        }
+                    }
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="text" data-trim data-noescape>
+                    error[E0308]: mismatched types
+                     --> src/main.rs:8:24
+                      |
+                    8 |             my_string: string,
+                      |                        ^^^^^^
+                      |                        |
+                      |                        expected struct `std::string::String`, found &str
+                      |                        help: try using a conversion method: `string.to_string()`
+                      |
+                      = note: expected type `std::string::String`
+                                 found type `&str`
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-trim data-noescape>
+                    impl MyStruct {
+                        pub fn new(string: String) -> MyStruct {
+                            MyStruct {
+                                my_string: string,
+                            }
+                        }
+                    }
+
+                    let my_struct = MyStruct::new("Hello, World!");
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="text" data-trim data-noescape>
+                    error[E0308]: mismatched types
+                      --> src/main.rs:14:31
+                       |
+                    14 | let my_struct = MyStruct::new("Hello, World!");
+                       |                               ^^^^^^^^^^^^^^^
+                       |                               |
+                       |                               expected struct `std::string::String`, found reference
+                       |                               help: try using a conversion method: `"Hello, World!".to_string()`
+                       |
+                       = note: expected type `std::string::String`
+                                  found type `&'static str`
+                    </code></pre>
+                </section>
+            </section>
+
+            <section>
+                <h2>String Types</h2>
+                <ul>
+                    <li class="fragment"><code>String</code></li>
+                    <li class="fragment"><code>&str</code></li>
+                    <li class="fragment"><code>&'static str</code>(???)</li>
+                    <li class="fragment"><code>OsString</code></li>
+                    <li class="fragment"><code>OsStr</code></li>
+                    <li class="fragment"><code>CString</code></li>
+                    <li class="fragment"><code>CStr</code></li>
+                    <li class="fragment"><code>Path</code></li>
+                    <li class="fragment"><code>PathBuf</code></li>
+                </ul>
+            </section>
+
+            <section>
+                <blockquote>
+                    Q: Why can't Rust make strings easy like they are in <code>$LANG</code>???
+                </blockquote>
+                <p class="fragment">A: Because rust has different goals than <code>$LANG</code></p>
+            </section>
+
+            <section>
+                <p>Strings highlight a lot of the ways Rust differs from other programming languages</p>
+            </section>
+
+            <section>
+                <h2>Two Major Differences</h2>
+                <ul>
+                    <li>Memory management/ownership</li>
+                    <li>Dealing with UTF-8</li>
+                </ul>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Memory and Ownership</h2>
+                </section>
+
+                <section>
+                    <h2>Rust only has <strong>one</strong> string type</h2>
+                    <p><code>&str</code></p>
+                    <p>(pronounced "string slice")</p>
+                </section>
+
+                <section>
+                    <p>Borrowed array of bytes containing valid UTF-8</p>
+                </section>
+
+                <section>
+                    <p>Those bytes must exist somewhere in order to be borrowed</p>
+                </section>
+
+                <section>
+                    <h3>String Literals</h3>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string: &'static str = "Hello!";
+                    </code></pre>
+                    <p>
+                        The bytes are baked into the application binary
+                    </p>
+                </section>
+
+                <section>
+                    <h3>Dynamic Strings</h3>
+                    <p><code>std</code> adds allocation</p>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input).unwrap();
+                    println!("User input: {}", input);
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3><code>String</code></h3>
+                    <ul>
+                        <li>Allocates space in memory</li>
+                        <li>Owns the allocated memory</li>
+                        <li>Provides a safe API for filling that memory</li>
+                        <li>Allows you to borrow a <code>&str</code> from that memory</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <h2>Why do it this way?</h2>
+
+                <ul>
+                    <li class="fragment">Rust is performance-conscious</li>
+                    <li class="fragment">Rust is explicit</li>
+                    <li class="fragment">Rust gives you control</li>
+                    <li class="fragment">Rust emphasizes local reasoning</li>
+                </ul>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Example: Building Strings</h3>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    assert_eq!("Hello, " + "World!", "Hello, World!");
+                    </code></pre>
+
+                    <pre><code class="text" data-trim data-noescape>
+                    error[E0369]: binary operation `+` cannot be applied to type `&str`
+                     --> src/main.rs:2:26
+                      |
+                    2 |     assert_eq!("Hello, " + "World!", "Hello, World!");
+                      |                --------- ^ -------- &str
+                      |                |         |
+                      |                |         `+` cannot be used to concatenate two `&str` strings
+                      |                &str
+                    help: `to_owned()` can be used to create an owned `String` from a string reference. String concatenation appends the string on the right to the string on the left and may require reallocation. This requires ownership of the string on the left
+                      |
+                    2 |     assert_eq!("Hello, ".to_owned() + "World!", "Hello, World!");
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let mut result = String::new();
+                    result.push_str("Hello, ");
+                    result.push_str("World!");
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    "Hello, ".to_owned() + "World!" + "some" + "more"
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let mut my_string = String::new();
+                    for item in some_list {
+                        my_string = my_string + ", " + item;
+                    }
+                    println!("{}", item);
+                    </code></pre>
+                    <p>This is <code>O(n^2)</code> in most languages, but it's <code>O(n)</code>in Rust</p>
+                </section>
+
+                <section>
+                    <p>Other languages have to introduce a separate string type to give you control when it matters:</p>
+                    <pre><code class="c#" data-noescape data-trim>
+                    var builder = new StringBuilder();
+                    foreach (var item in someList)
+                    {
+                        builder.Append(", ").Append(item);
+                    }
+                    Console.WriteLine(builder);
+                    </code></pre>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Copying strings</h3>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string = String::from("Hello");
+                    let another_string = my_string + ", World!";
+
+                    assert_eq!(my_string, "Hello");
+                    assert_eq!(another_string, "Hello, World!");
+                    </code></pre>
+
+                    <pre><code class="text" data-noescape data-trim>
+                    error[E0382]: borrow of moved value: `my_string`
+                     --> src/main.rs:5:5
+                      |
+                    2 |     let my_string = String::from("Hello");
+                      |         --------- move occurs because `my_string` has type `std::string::String`, which does not implement the `Copy` trait
+                    3 |     let another_string = my_string + ", World!";
+                      |                          --------- value moved here
+                    4 |
+                    5 |     assert_eq!(my_string, "Hello");
+                      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ value borrowed here after move
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string = String::from("Hello");
+                    let another_string = my_string.clone() + ", World!";
+
+                    assert_eq!(my_string, "Hello");
+                    assert_eq!(another_string, "Hello, World!");
+                    </code></pre>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Local reasoning</h3>
+                </section>
+
+                <section>
+                    <pre><code class="cpp" data-noescape data-trim>
+                    struct MyStruct
+                    {
+                        char *myString;
+                    }
+                    </code></pre>
+                    <ul>
+                        <li>Where does <code>myString</code> live?</li>
+                        <li>Was it allocated?</li>
+                        <li>If it was, who needs to free it?</li>
+                        <li>Is the answer different in different cases?</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    struct MyStruct {
+                        my_string: String,
+                    }
+                    </code></pre>
+
+                    <p>vs</p>
+
+                    <pre><code class="rust" data-noescape data-trim>
+                    struct MyStruct<'a> {
+                        my_string: &'a str,
+                    }
+                    </code></pre>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>UTF-8</h2>
+                    <p class="fragment">oh god why</p>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    assert_eq!("🤦🏼‍♂️".len(), 17);
+                    </code></pre>
+
+                    <p class="fragment">
+                        Please read <a href="https://hsivonen.fi/string-length/">https://hsivonen.fi/string-length/</a>
+                    </p>
+
+                    <p class="fragment">oh god it's so complicated</p>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string = "Hello";
+                    let first_letter = my_string[0];
+                    assert_eq(first_letter, 'H');
+                    </code></pre>
+
+                    <pre class="fragment"><code class="text" data-trim data-noescape>
+                    error[E0277]: the type `str` cannot be indexed by `{integer}`
+                     --> src/main.rs:3:24
+                      |
+                    3 |     let first_letter = my_string[0];
+                      |                        ^^^^^^^^^^^^ string indices are ranges of `usize`
+                      |
+                      = help: the trait `std::slice::SliceIndex<str>` is not implemented for `{integer}`
+                      = note: you can use `.chars().nth()` or `.bytes().nth()`
+                              see chapter in The Book <https://doc.rust-lang.org/book/ch08-02-strings.html#indexing-into-strings>
+                      = note: required because of the requirements on the impl of `std::ops::Index<{integer}>` for `str`
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string = "Hello";
+                    let first_letter = &my_string[0..1];
+                    assert_eq(first_letter, 'H');
+                    </code></pre>
+
+                    <pre class="fragment"><code class="text" data-trim data-noescape>
+                    error[E0277]: can't compare `&str` with `char`
+                     --> src/main.rs:4:5
+                      |
+                    4 |     assert_eq!(first_letter, 'H');
+                      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ no implementation for `&str == char`
+                      |
+                      = help: the trait `std::cmp::PartialEq<char>` is not implemented for `&str`
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string = "Hello";
+                    let first_letter = my_string.chars().nth(0).unwrap();
+                    assert_eq!(first_letter, 'H');
+                    </code></pre>
+                </section>
+
+                <section>
+                    <p>
+                        There are many, many examples of things that seem easy in other languages but are
+                        complicated in Rust
+                    </p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Here's the thing...</h2>
+                    <p class="fragment">Strings are hard, actually</p>
+                </section>
+
+                <section>
+                    <p>If you write your application assuming all input is ascii, it <strong>will</strong> break</p>
+                    <p class="fragment">often in surprising and horrible ways</p>
+                </section>
+
+                <section>
+                    <ul>
+                        <li>Rust cares about correctness</li>
+                        <li>Rust cares about consistency</li>
+                        <li>Rust will make you think about edge cases early</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <h2>Conclusion Goes Here</h2>
+            </section>
+        </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+        // More info about config & dependencies:
+        // - https://github.com/hakimel/reveal.js#configuration
+        // - https://github.com/hakimel/reveal.js#dependencies
+        Reveal.initialize({
+            dependencies: [
+                { src: 'plugin/markdown/marked.js' },
+                { src: 'plugin/markdown/markdown.js' },
+                { src: 'plugin/notes/notes.js', async: true },
+                { src: 'plugin/highlight/highlight.js', async: true }
+            ],
+            hash: true,
+        });
+    </script>
+</body>
+
+</html>
