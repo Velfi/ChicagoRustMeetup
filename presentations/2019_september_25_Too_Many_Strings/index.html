@@ -33,7 +33,7 @@
 
             <section>
                 <h3>Disclaimer: Memory Management</h3>
-                <p>Assumption: You need to allocate memory to handle dynamically-sized data.</p>
+                <p>Assumption: You need to allocate memory to handle dynamically-sized data</p>
             </section>
 
             <section>
@@ -65,7 +65,7 @@
                     }
                     </code></pre>
 
-                    <pre><code class="clean" data-trim data-noescape>
+                    <pre><code class="text" data-trim data-noescape>
                     error[E0106]: missing lifetime specifier
                      --> src/main.rs:2:13
                       |
@@ -91,7 +91,7 @@
                 </section>
 
                 <section>
-                    <pre><code class="clean" data-trim data-noescape>
+                    <pre><code class="text" data-trim data-noescape>
                     error[E0308]: mismatched types
                      --> src/main.rs:8:24
                       |
@@ -121,7 +121,7 @@
                 </section>
 
                 <section>
-                    <pre><code class="markdown" data-trim data-noescape>
+                    <pre><code class="text" data-trim data-noescape>
                     error[E0308]: mismatched types
                       --> src/main.rs:14:31
                        |
@@ -184,6 +184,9 @@
 
                 <section>
                     <p>Borrowed array of bytes containing valid UTF-8</p>
+                </section>
+
+                <section>
                     <p>Those bytes must exist somewhere in order to be borrowed</p>
                 </section>
 
@@ -193,8 +196,7 @@
                     let my_string: &'static str = "Hello!";
                     </code></pre>
                     <p>
-                        String literals are just string slices. The bytes are "owned" by the application binary and live
-                        forever, hence the <code>'static</code> lifetime.
+                        The bytes are baked into the application binary
                     </p>
                 </section>
 
@@ -211,21 +213,22 @@
                 <section>
                     <h3><code>String</code></h3>
                     <ul>
-                        <li>Allocates space in memory.</li>
-                        <li>Owns the allocated memory.</li>
-                        <li>Allows you to borrow a <code>&str</code> from the allocated bytes.</li>
-                        <li>Provides a safe API for building a valid <code>str</code>.</li>
+                        <li>Allocates space in memory</li>
+                        <li>Owns the allocated memory</li>
+                        <li>Provides a safe API for filling that memory</li>
+                        <li>Allows you to borrow a <code>&str</code> from that memory</li>
                     </ul>
                 </section>
             </section>
 
             <section>
-                <h2>Why is Rust like this?</h2>
+                <h2>Why do it this way?</h2>
 
                 <ul>
                     <li class="fragment">Rust is performance-conscious</li>
                     <li class="fragment">Rust is explicit</li>
                     <li class="fragment">Rust gives you control</li>
+                    <li class="fragment">Rust emphasizes local reasoning</li>
                 </ul>
             </section>
 
@@ -239,7 +242,7 @@
                     assert_eq!("Hello, " + "World!", "Hello, World!");
                     </code></pre>
 
-                    <pre><code class="plaintext" data-trim data-noescape>
+                    <pre><code class="text" data-trim data-noescape>
                     error[E0369]: binary operation `+` cannot be applied to type `&str`
                      --> src/main.rs:2:26
                       |
@@ -256,7 +259,15 @@
 
                 <section>
                     <pre><code class="rust" data-noescape data-trim>
-                    "Hello, ".to_owned() + "World!"
+                    let mut result = String::new();
+                    result.push_str("Hello, ");
+                    result.push_str("World!");
+                    </code></pre>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    "Hello, ".to_owned() + "World!" + "some" + "more"
                     </code></pre>
                 </section>
 
@@ -282,15 +293,80 @@
                     Console.WriteLine(builder);
                     </code></pre>
                 </section>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Copying strings</h3>
+                </section>
 
                 <section>
-                    <p>String copies are also explicit in Rust:</p>
+                    <pre><code class="rust" data-noescape data-trim>
+                    let my_string = String::from("Hello");
+                    let another_string = my_string + ", World!";
+
+                    assert_eq!(my_string, "Hello");
+                    assert_eq!(another_string, "Hello, World!");
+                    </code></pre>
+
+                    <pre><code class="text" data-noescape data-trim>
+                    error[E0382]: borrow of moved value: `my_string`
+                     --> src/main.rs:5:5
+                      |
+                    2 |     let my_string = String::from("Hello");
+                      |         --------- move occurs because `my_string` has type `std::string::String`, which does not implement the `Copy` trait
+                    3 |     let another_string = my_string + ", World!";
+                      |                          --------- value moved here
+                    4 |
+                    5 |     assert_eq!(my_string, "Hello");
+                      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ value borrowed here after move
+                    </code></pre>
+                </section>
+
+                <section>
                     <pre><code class="rust" data-noescape data-trim>
                     let my_string = String::from("Hello");
                     let another_string = my_string.clone() + ", World!";
 
                     assert_eq!(my_string, "Hello");
                     assert_eq!(another_string, "Hello, World!");
+                    </code></pre>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Local reasoning</h3>
+                </section>
+
+                <section>
+                    <pre><code class="cpp" data-noescape data-trim>
+                    struct MyStruct
+                    {
+                        char *myString;
+                    }
+                    </code></pre>
+                    <ul>
+                        <li>Where does <code>myString</code> live?</li>
+                        <li>Was it allocated?</li>
+                        <li>If it was, who needs to free it?</li>
+                        <li>Is the answer different in different cases?</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <pre><code class="rust" data-noescape data-trim>
+                    struct MyStruct {
+                        my_string: String,
+                    }
+                    </code></pre>
+
+                    <p>vs</p>
+
+                    <pre><code class="rust" data-noescape data-trim>
+                    struct MyStruct<'a> {
+                        my_string: &'a str,
+                    }
                     </code></pre>
                 </section>
             </section>
