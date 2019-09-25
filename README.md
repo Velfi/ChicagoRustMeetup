@@ -2,6 +2,7 @@
 ## Welcome
 
 ### Presentations
+* [September 25th, 2019 - Too Many Strings](/presentations/2019_september_25_Too_Many_Strings/index.html)
 * [August 27st, 2019 - Macros Rule!](/presentations/2019_aug_27_Macros_Rule/index.html)
 * [July 31st, 2019 - Why Rust Has 4 String Types (And Other Answers For Beginners)](https://docs.google.com/presentation/d/1eCt0ph7wLw6Sdg4NMjuVB7_wUsLTm1EJteX3nQWqZ84)
 * [June 25th, 2019 - Building a Safe, Idiomatic Rust Wrapper Around C](presentations/2019_june_25_Idiomatic_C_Wrappers_In_Rust/index.html)
