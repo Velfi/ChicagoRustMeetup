@@ -16,6 +16,7 @@
 * [October 23rd, 2018 - The Rust Ecosystem: What To Know After "Hello, World!"](/presentations/2018_october_23_The_Rust_Ecosystem/index.html)
 
 ### This Month In Rust
+* [February 25th, 2020](/this_month_in_rust/2020_february_25.md)
 * [January 29th, 2020](/this_month_in_rust/2020_january_29.md)
 * [November 20th, 2019](/this_month_in_rust/2019_november_20.md)
 * [October 29th, 2019](/this_month_in_rust/2019_october_29.md)
