@@ -2,6 +2,7 @@
 ## Welcome
 
 ### Presentations
+* [January 29th, 2020 - Byte Sized Rust - AWS Lambdas & Rust](/presentations/2020_jan_29_Byte_Sized_Rust/index.html)
 * [November 20th, 2019 - Constructing a Repl(like) from scratch](https://docs.google.com/presentation/d/e/2PACX-1vSqYyAli1mdKAGyAMdfUoAHn7MV60gYjiwy1BoNZ_izhf6F2gsjDtztLheuQWOm191vq0zByXvEOhya/pub?start=false&loop=false&delayms=3000)
 * [October 29th, 2019 - Entity Component Systems: An Intro To The Specs Crate Using Roguelikes](https://docs.google.com/presentation/d/11lT8SJvsVsBnh0cL0k6-lizHJPHr9Z1_8vN5GWfCDNE/edit?usp=sharing)
 * [September 25th, 2019 - Too Many Strings](/presentations/2019_september_25_Too_Many_Strings/index.html)
@@ -15,6 +16,7 @@
 * [October 23rd, 2018 - The Rust Ecosystem: What To Know After "Hello, World!"](/presentations/2018_october_23_The_Rust_Ecosystem/index.html)
 
 ### This Month In Rust
+* [January 29th, 2020](/this_month_in_rust/2020_january_29.md)
 * [November 20th, 2019](/this_month_in_rust/2019_november_20.md)
 * [October 29th, 2019](/this_month_in_rust/2019_october_29.md)
 * [September 25th, 2019](/this_month_in_rust/2019_september_25.md)

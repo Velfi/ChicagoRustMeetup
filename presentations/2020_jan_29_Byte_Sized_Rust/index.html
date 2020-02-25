@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+	<html class="sl-root decks export offline loaded">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>byte-size-rust</title>
+
+
+		<link rel="stylesheet" type="text/css" href="lib/offline-v2.css">
+
+
+
+	</head>
+	<body class="reveal-viewport theme-font-montserrat theme-color-white-blue">
+		<div class="reveal">
+			<div class="slides">
+				<section data-id="a81ab33c0cb88599bf851ce59cf0621b"><div class="sl-block" data-block-type="text" style="width: 806px; left: 237px; top: 253px; height: auto;" data-block-id="16abbbd7c2ed094426a71bafa9a3cb9a"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Byte Sized Rust</h1>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="b2c83966e1ea7898dfeae406e244e596" style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 340px; top: 504px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<p>Chicago Rust Meetup<br>
+January 2020<br>
+<a href="https://www.linkedin.com/in/stevehoffmanchicago/" target="_blank">Steve Hoffman</a> - <a href="https://twitter.com/bacoboy" target="_blank">@bacoboy</a></p>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="89492b30a6abe90ccb315978d157b3fa" style="min-width: 1px; min-height: 1px; width: 145px; height: 144px; left: 416px; top: 72px;"><div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="367" data-natural-height="365" data-lazy-loaded="" data-src="byte-size-rust/02ca4e7d2c4ced2e3752de5c8ef50b82.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="d9121e9ba22b551bfbb4e3e24d230af9" style="min-width: 1px; min-height: 1px; width: 144px; height: 144px; left: 721px; top: 72px;"><div class="sl-block-content" style="z-index: 14;" data-inline-svg="false"><img data-natural-width="144" data-natural-height="144" style="" data-lazy-loaded="" data-src="byte-size-rust/3e3a0220c7c4797167e254b342004f1a.svg"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="b25f891c9adf70a1314e17c5be019a6b" style="min-width: 1px; min-height: 1px; width: 72px; height: 72px; left: 605px; top: 108px;"><div class="sl-block-content" style="z-index: 15;"><img data-natural-width="1350" data-natural-height="1350" style="" data-lazy-loaded="" data-src="byte-size-rust/b20b0b8387cbc75aed24fa5f0734b73a.jpg"></div></div></section><section class="stack" data-id="d9d7e14379b9cea5c4d62b59b0993dd8"><section data-id="9c1d36674b477b4114347f0cefcea35e"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 0px; height: auto;" data-block-id="4d3562328a11636621dc9236a8c21817"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Motivation...</h1>
+</div></div>
+
+<div class="sl-block" data-block-type="text" data-block-id="2ae50fec843fbf63211eb96cd27231f5" style="height: auto; min-width: 30px; min-height: 30px; width: 201px; left: 1079px; top: 690px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: right;">
+<pre><a href="https://xkcd.com/149/" target="_blank">https://xkcd.com/149/</a></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="73bf8e767d192f386cf6f111f79472f3" style="height: auto; min-width: 30px; min-height: 30px; width: 497px; left: 749px; top: 284px;"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 200%;" data-fragment-index="0">
+<p style="text-align:left">Me: Run my code</p>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="35e2a2ba2f381353f87c31d4e4088dab" style="min-width: 1px; min-height: 1px; width: 577px; height: 479px; left: 143px; top: 144px;"><div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="360" data-natural-height="299" data-lazy-loaded="" data-src="byte-size-rust/51cc6f23d12852f3bd4349c4334a6072.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 371px; left: 749px; top: 451px;" data-block-id="24d8a58a56e4b19326e392a5ccf8ee6f"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15; font-size: 200%;" data-fragment-index="1">
+<p style="text-align:left">Cloud: Okay</p>
+</div></div></section><section data-id="5a5d8b1167b6d16c5655124729aa191d"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 0px; height: auto;" data-block-id="a456f2868a47392767a830413e1a10d6"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Less Stuff I Gotta Do...</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 1120px; height: 501px; left: 80px; top: 123px; min-width: 1px; min-height: 1px;" data-block-id="739a6d1f178fc85cce8b2ba7b15ea880"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="898" data-natural-height="402" style="" data-lazy-loaded="" data-src="byte-size-rust/2a8d90840aaa8035166143c73f505c43.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 923px; left: 357px; top: 690px;" data-block-id="679a22b3a3122f98c2997237027f1428"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%; text-align: right;">
+<pre><a href="https://blogs.oracle.com/developers/functions-as-a-service:-evolution,-use-cases,-and-getting-started" target="_blank">https://blogs.oracle.com/developers/functions-as-a-service:-evolution,-use-cases,-and-getting-started</a></pre>
+</div></div></section><section data-id="01f64385f49eab88a32bf04e0ade3503"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 0px; height: auto;" data-block-id="9a543a960d433cc8866921e1eeadc36c"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Idle Servers Cost $$$</h1>
+</div></div>
+<div class="sl-block" data-block-type="table" style="height: auto; min-width: 120px; min-height: 30px; width: 1236px; left: 22px; top: 184px;" data-block-id="930f6e48acdf1164a7675050c462b906"><div class="sl-block-content" style="z-index: 12; background-color: rgba(0, 0, 0, 0);" data-table-cols="6" data-table-rows="8"><table><tbody>
+<tr>
+<th>Type</th>
+<th>vCPU</th>
+<th>Mem GB</th>
+<th>Hourly on demand</th>
+<th>Monthly on demand</th>
+<th>Reserved 3yr all upfront</th>
+</tr>
+<tr>
+<td>t3.nano</td>
+<td>2</td>
+<td>0.5</td>
+<td>$0.0052</td>
+<td>$3.75</td>
+<td>$1.41</td>
+</tr>
+<tr>
+<td>t3.small</td>
+<td>2</td>
+<td>2</td>
+<td>$0.0208</td>
+<td>$14.98</td>
+<td>$5.72</td>
+</tr>
+<tr>
+<td>m5.large</td>
+<td>2</td>
+<td>8</td>
+<td>$0.096</td>
+<td>$69.12</td>
+<td>$26.89</td>
+</tr>
+<tr>
+<td>c5.large</td>
+<td>2</td>
+<td>4</td>
+<td>$0.085</td>
+<td>$61.20</td>
+<td>$23.39</td>
+</tr>
+<tr>
+<td>r5.large</td>
+<td>2</td>
+<td>16</td>
+<td>$0.126</td>
+<td>$90.72</td>
+<td>$36.31</td>
+</tr>
+<tr>
+<td>c5n.2xlarge</td>
+<td>8</td>
+<td>21</td>
+<td>$0.432</td>
+<td>$311.04</td>
+<td>$119.67</td>
+</tr>
+<tr>
+<td>c5n.18xlarge</td>
+<td>72</td>
+<td>192</td>
+<td>$3.888</td>
+<td>$2,799.36</td>
+<td>$896.97</td>
+</tr>
+</tbody></table></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="371d4ab1f32a8d3f78b3d68ed8866fe1" style="height: auto; min-width: 30px; min-height: 30px; width: 426px; left: 854px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<pre><span style="font-size:0.5em"><a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank">https://aws.amazon.com/ec2/pricing/on-demand/</a></span></pre>
+</div></div></section><section data-id="e084a6913c44044865dbe50e4618cd89"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 124px; top: 37px; height: auto;" data-block-id="9077c0707c657f40880311fa1d1063c0"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;" dir="ui">
+<h1>Deploying Faster...</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="8671b7ea5b5e97ba70d6ccfc129c472d" style="min-width: 1px; min-height: 1px; width: 904px; height: 509px; left: 188px; top: 168px;"><div class="sl-block-content" style="z-index: 12;"><img data-natural-width="638" data-natural-height="359" style="" data-lazy-loaded="" data-src="byte-size-rust/56e5c5f4ae6e836f143778cc1de03ae2.jpg"></div></div></section></section><section class="stack" data-id="ac170acf81baea1de6299348a4346b0a"><section data-id="709d5f5fcb0fa42a00c46ddc81707b0d"><div class="sl-block" data-block-type="text" style="width: 806px; left: 237px; top: 277px; height: auto;" data-block-id="e6e849209161b51d580f72ffd1007d8c"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;" dir="ui">
+<h1>What is a λ?</h1>
+</div></div></section><section data-id="43b55e4a46ef64524af5ac4c4d97ce44"><div class="sl-block" data-block-type="text" style="width: 806px; left: 237px; top: 52px; height: auto;" data-block-id="4251ec2423f9903eec3d7ecd5869298c"><div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text" style="z-index: 10;" dir="ui">
+<h1>AWS Says...</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="eefa71d910b335df45814374a1f9e8dd" style="min-width: 1px; min-height: 1px; width: 940px; height: 223px; left: 170px; top: 407px;"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="1602" data-natural-height="380" style="" data-lazy-loaded="" data-src="byte-size-rust/3251ebd2b1059f7c144a82e16c7763ee.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="a8bda570daa261cc1695bdc3046aab05" style="min-width: 1px; min-height: 1px; width: 806px; height: 127px; left: 237px; top: 225px;"><div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="1570" data-natural-height="248" data-lazy-loaded="" data-src="byte-size-rust/8377ca7a8ea24ed1bf766ff8658a50fe.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="66cc59ad38f926f764700d9d602d6ec0" style="height: auto; width: 380px; left: 900px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="https://aws.amazon.com/lambda/" target="_blank">https://aws.amazon.com/lambda/</a></span></pre>
+</div></div></section><section data-id="b71d9c79d8ba3caed8a7949b4c9dfb30">
+
+
+<div class="sl-block" data-block-type="text" style="width: 1228px; left: 36px; top: 109px; height: auto;" data-block-id="31e34140a300e96f2afd94ef50942772"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 12;">
+<h1><span style="font-size:0.7em">A λ is a "handler" function YOU provide</span></h1>
+
+<h1> </h1>
+
+<h1><span style="font-size:0.7em">that runs in an AWS container "somewhere"<br>
+<br>
+so you focus on your code not plumbing</span></h1>
+
+<p> </p>
+</div></div>
+</section><section data-id="cee74e43b437ac03eab824b0a3e83490"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 81px; height: auto;" data-block-id="0581aba39920cff09d31470a3ec23297"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Python Handler</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" data-block-id="4070ba19a6d0a6fa73686ded4e463a60" style="min-width: 30px; min-height: 30px; width: 1187px; height: 287px; left: 47px; top: 238px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13; font-size: 200%;"><pre class="python"><code data-line-numbers="">def my_handler(event, context):
+    message = 'Hello {} {}!'.format(event['first_name'], 
+                                    event['last_name'])  
+    return { 
+        'message' : message
+    }  
+</code></pre></div></div></section><section data-id="d0d5acf36f3e4c4ac48b6b4fb2a740b7"><div class="sl-block" data-block-type="text" style="width: 806px; left: 240px; top: 0px; height: auto;" data-block-id="ff00ffa95444938058230418e241432e"><div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text" style="z-index: 10;" dir="ui">
+<h1>Reacts to Events...</h1>
+
+<p>(sync like HTTP or async like message on queue)</p>
+</div></div>
+
+<div class="sl-block" data-block-type="image" style="min-width: 1px; min-height: 1px; width: 1075px; height: 453px; left: 103px; top: 182px;" data-block-id="1b83ce5c31c5d51316b9af164928524f"><div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="2414" data-natural-height="1018" data-lazy-loaded="" data-src="byte-size-rust/1bd52007eef1c6ee05210716a2046c00.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="be5b397e9cc6c62b42b9d6c937ea3876" style="height: auto; min-width: 30px; min-height: 30px; width: 135px; left: 573px; top: 669px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<p>Function</p>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="dc0cf7ad96b1b2b19fa36f2fc3ba77e5" style="height: auto; min-width: 30px; min-height: 30px; width: 159px; left: 255px; top: 669px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<p>Trigger</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 224px; left: 816px; top: 669px;" data-block-id="e0964be30ceef0038aa9df86401f95a6"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p>Does things to..</p>
+</div></div>
+<div class="sl-block" data-block-type="line" data-block-id="29636c03f72de6722598b2095d8d0e60" style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 335px; top: 591px;"><div class="sl-block-content" data-line-x1="0" data-line-y1="200" data-line-x2="0" data-line-y2="131" data-line-color="#000000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 15;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="1" height="69" viewbox="0 131 1 69"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="0" y1="200" x2="0" y2="133"></line><line stroke="#000000" stroke-width="2" x1="0" y1="200" x2="0" y2="133"></line><path style="fill: rgba(0,0,0,0);" stroke="#000000" stroke-width="2" transform="translate(0,133) rotate(0)" d="M 6 6 L 0 0 L -6 6"></path></svg></div></div>
+<div class="sl-block" data-block-type="line" style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 641px; top: 600px;" data-block-id="18a09074f8037f7fc4c8d96d75c83e5b"><div class="sl-block-content" data-line-x1="0" data-line-y1="200" data-line-x2="0" data-line-y2="131" data-line-color="#000000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 16;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="1" height="69" viewbox="0 131 1 69"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="0" y1="200" x2="0" y2="133"></line><line stroke="#000000" stroke-width="2" x1="0" y1="200" x2="0" y2="133"></line><path style="fill: rgba(0,0,0,0);" stroke="#000000" stroke-width="2" transform="translate(0,133) rotate(0)" d="M 6 6 L 0 0 L -6 6"></path></svg></div></div>
+<div class="sl-block" data-block-type="line" style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 928px; top: 591px;" data-block-id="bc1fe1de75dd8fb40189f83fa7ac7057"><div class="sl-block-content" data-line-x1="0" data-line-y1="200" data-line-x2="0" data-line-y2="131" data-line-color="#000000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 18;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="1" height="69" viewbox="0 131 1 69"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="0" y1="200" x2="0" y2="133"></line><line stroke="#000000" stroke-width="2" x1="0" y1="200" x2="0" y2="133"></line><path style="fill: rgba(0,0,0,0);" stroke="#000000" stroke-width="2" transform="translate(0,133) rotate(0)" d="M 6 6 L 0 0 L -6 6"></path></svg></div></div></section><section data-id="5e7a5a4d4881ab7984b866787bef7e32"><div class="sl-block" data-block-type="text" style="width: 1087px; left: 97px; top: 96px; height: auto;" data-block-id="69023de99032c1d6ea14be503f3c828f"><div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text" style="z-index: 11;" dir="ui">
+<h1>All The Clouds Have Them</h1>
+</div></div>
+
+<div class="sl-block" data-block-type="image" data-block-id="307e9ef05938599a7a148172f60360a9" style="min-width: 1px; min-height: 1px; width: 541px; height: 154px; left: 35px; top: 461px;"><div class="sl-block-content" style="z-index: 12;"><img data-natural-width="1406" data-natural-height="400" style="" data-lazy-loaded="" data-src="byte-size-rust/621486152bdc5fca16920863210f73b7.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="63d1fc33a475f7b10446b0f92f91a624" style="min-width: 1px; min-height: 1px; width: 588px; height: 269px; left: 666px; top: 414px;"><div class="sl-block-content" style="z-index: 13;"><img data-natural-width="1366" data-natural-height="624" style="" data-lazy-loaded="" data-src="byte-size-rust/5f77f83a3c66c21356f0372793263681.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="7becdf82b56dc4a952512f6a9d4a96bf" style="min-width: 1px; min-height: 1px; width: 443px; height: 249px; left: 80px; top: 236px;"><div class="sl-block-content" style="z-index: 14;"><img data-natural-width="1200" data-natural-height="675" style="" data-lazy-loaded="" data-src="byte-size-rust/28734530dfba11d5816e59d8794501ee.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="0c8d8c153ca68414c21ce68e11bddb75" style="min-width: 1px; min-height: 1px; width: 479px; height: 168px; left: 744px; top: 246px;"><div class="sl-block-content" style="z-index: 15;"><img style="" data-natural-width="957" data-natural-height="335" data-lazy-loaded="" data-src="byte-size-rust/0acbc83c8ca6eee1c896145487609d07.png"></div></div></section><section data-id="740d7d2bc2ec17d6a3bf6bfbcbd63ade"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 47px; height: auto;" data-block-id="6055df80920f630fb71cd38e10cbc0a4"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Cheap!</h1>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="481f5071205b06f0f8e92001bd392f25" style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 340px; top: 135px;"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11;" data-fragment-index="0">
+<p>In Theory...</p>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="76727757eb485a6e5219081d01d445cf" style="height: auto; min-width: 30px; min-height: 30px; width: 717px; left: 282px; top: 445px;"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;" data-fragment-index="2">
+<p><span style="color:rgb(51, 51, 51); text-align:start"><span>Then $0.0000166667 GB/Second after that...</span></span></p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 341px; top: 216px;" data-block-id="36c8db0ff8f1cb089bbdf21894cff81b"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;" data-fragment-index="1">
+<p><span style="color:rgb(51, 51, 51)">First million invocations free...</span></p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 341px; top: 269px;" data-block-id="42132dd7556eb73dff59a6197a262e33"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;" data-fragment-index="1">
+<p><span style="color:rgb(51, 51, 51)">Then $0.20/million after that...</span></p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 342px; top: 393px;" data-block-id="eb5d9288f7406ce319669021d46c6e0c"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;" data-fragment-index="2">
+<p><span style="color:rgb(35, 47, 62); text-align:start">400,000 GB-Seconds free...</span></p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 717px; left: 282px; top: 333px;" data-block-id="3f1bb12aab48defd124df598577cb02f"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 17;" data-fragment-index="2">
+<p><span style="color:rgb(51, 51, 51); text-align:start"><span>Plus</span></span></p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 717px; left: 284px; top: 526px;" data-block-id="40cb5301e61035e2abe49a04d69167d6"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 18;" data-fragment-index="3">
+<p><span style="color:rgb(51, 51, 51); text-align:start"><span>Plus</span></span></p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 340px; top: 600px;" data-block-id="568489769fc2caae669d6c024b794df1"><div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 19;" data-fragment-index="3">
+<p><span style="color:rgb(35, 47, 62); text-align:start">Other AWS Costs (Databases, Data Transfer...)</span></p>
+</div></div></section><section data-id="f2355529fe265816b76ba883ce0dd7ee"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 47px; height: auto;" data-block-id="faa9bc6c0f5e179ff568697bc81bdfcf"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Mo RAM Mo $</h1>
+</div></div>
+
+
+
+
+
+
+
+<div class="sl-block" data-block-type="image" data-block-id="1c77e5b26c5f19753db04da0d13b5932" style="min-width: 1px; min-height: 1px; width: 1075px; height: 485px; left: 102px; top: 144px;"><div class="sl-block-content" style="z-index: 12;"><img data-natural-width="1666" data-natural-height="752" style="" data-lazy-loaded="" data-src="byte-size-rust/03a9589a7c9fade5e63927b20cc7830b.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="060f6e8e1a2b36eb5060a5c1b9de08d0" style="height: auto; min-width: 30px; min-height: 30px; width: 369px; left: 911px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13; text-align: center;">
+<pre><a href="https://aws.amazon.com/lambda/pricing/" target="_blank"><span style="font-size:0.5em">https://aws.amazon.com/lambda/pricing/</span></a></pre>
+</div></div></section><section data-id="32e62a9dfed9f813b55f2c7f12b41da6"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 0px; height: auto;" data-block-id="0197328585e0e7fc28a267c0d749c310"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Pricing is "complicated"...</h1>
+</div></div>
+
+
+
+
+
+
+
+<div class="sl-block" data-block-type="text" data-block-id="67c79b6a239d2955f96edc1ac3c912c0" style="height: auto; min-width: 30px; min-height: 30px; width: 895px; left: 385px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11;">
+<pre><span style="font-size:0.5em"><a href="https://medium.com/@zackbloom/serverless-pricing-and-costs-aws-lambda-and-lambda-edge-169bfb58db75" target="_blank">https://medium.com/@zackbloom/serverless-pricing-and-costs-aws-lambda-and-lambda-edge-169bfb58db75</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="298d158473ae5eabaa1fde85761872ea" style="min-width: 1px; min-height: 1px; width: 650px; height: 398px; left: 0px; top: 161px;"><div class="sl-block-content" style="z-index: 12;"><img data-natural-width="2434" data-natural-height="1490" style="" data-lazy-loaded="" data-src="byte-size-rust/1cf3cf263bf4c42b88dfe19956a95375.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="0f9d040cfa4df4c9ed652eb856d5afc9" style="min-width: 1px; min-height: 1px; width: 643px; height: 398px; left: 637px; top: 161px;"><div class="sl-block-content" style="z-index: 13;"><img data-natural-width="2422" data-natural-height="1500" style="" data-lazy-loaded="" data-src="byte-size-rust/479d7ffcdfaa29028e226a5f347ea752.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="ea1320756ab1f35575f7bb6c0e620f87" style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 0px; top: 105px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p>Just Lambda</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 640px; top: 105px;" data-block-id="2fa8b1fd1ccf29fb64801b5137eb8456"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
+<p>Lambda + API GW</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 1280px; left: 0px; top: 576px;" data-block-id="5594914a3a0a378b88be2942121c603a"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 17;">
+<p>263 Billiable Line Items Per Region Just for Lambda before you add the "other stuff"</p>
+</div></div></section><section data-id="3c0ddb7c415753038991a36c86a8457d"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 81px; height: auto;" data-block-id="e5a375cc99208bd09e7a6ea756e2634d"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Node Handler</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" data-block-id="8f905ff6600e7bb53be4ec42fb95c7e0" style="min-width: 30px; min-height: 30px; width: 1200px; height: 216px; left: 40px; top: 216px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12; font-size: 200%;" data-code-wrap="true"><pre class="none"><code data-line-numbers="">exports.myHandler = function(event, context, callback) {   
+   callback(null, "some success message");
+   // or 
+   // callback("some error type"); 
+}
+</code></pre></div></div></section><section data-id="350e978ad01a1892af185ee1119c8094"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 111px; top: 47px; height: auto;" data-block-id="2649e96f85657d37ac47b91db8276b3e"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Old Hacks</h1>
+</div></div>
+
+<div class="sl-block" data-block-type="text" style="height: auto; width: 325px; left: 955px; top: 684px;" data-block-id="67f37c55bc6521c94e98388200837333"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11;">
+<pre><span style="font-size:0.5em"><a href="https://aws.amazon.com/lambda/faqs/" target="_blank">https://aws.amazon.com/lambda/faqs/</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="code" data-block-id="783b34c4d98eab5ed7d738d604c9b3ed" style="width: 1181.03px; height: 375.531px; left: 49.485px; top: 257.024px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12; font-size: 200%;"><pre class="javascript"><code data-line-numbers="">exports.myHandler = function(event, context, callback) {
+  const execFile = require('child_process').execFile;
+  execFile('./myprogram', (error, stdout, stderr) =&gt; {
+    if (error) {
+      callback(error);
+    }
+    callback(null, stdout);
+  });
+}</code></pre></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="d8787b0c8c9acd9d1434f23ed3a1ba0c" style="height: auto; width: 858.668px; left: 210.666px; top: 169.776px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<p>First Go apps would use this to run any<br>
+Amazon Linux compatible binary/shell script:</p>
+</div></div></section><section data-id="a9927edd46f649bbfac2d0a3a110cba6"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 81px; height: auto;" data-block-id="edca7366cb1693f93bc1e2148121095f"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Go Handler</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1198.72px; height: 336.138px; left: 40.64px; top: 257.646px;" data-block-id="33d9c98fa80c84ba3407a454c5b4fd69"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 11; font-size: 200%;" data-code-wrap="true"><pre class="go"><code data-line-numbers="">type MyEvent struct {
+        Name string `json:"name"`
+}
+
+func HandleRequest(ctx context.Context, name MyEvent) (string, error) {
+        return fmt.Sprintf("Hello %s!", name.Name ), nil
+}
+</code></pre></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="5219c9d65cdfb95551400f7bf64f9c41" style="height: auto; width: 600px; left: 320px; top: 208.213px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<p>Eventually Go got official support:</p>
+</div></div></section><section data-id="4ba37a24c953622c3826f056f71c4852"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 111px; top: 47px; height: auto;" data-block-id="c9d597ca3fcd865b47ddb11e89cf29be"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Supported Languages</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="2485f89e11123e141de0fa4e5a5e3191" style="min-width: 1px; min-height: 1px; width: 1261px; height: 194px; left: 10px; top: 263px;"><div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="1742" data-natural-height="268" data-lazy-loaded="" data-src="byte-size-rust/fe0042a569aaf1fccb07c411ba4e8c6e.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="eecf24024998ab8f98a9565cdfb6ff79" style="height: auto; min-width: 30px; min-height: 30px; width: 325px; left: 955px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<pre><span style="font-size:0.5em"><a href="https://aws.amazon.com/lambda/faqs/" target="_blank">https://aws.amazon.com/lambda/faqs/</a></span></pre>
+</div></div></section><section data-id="163e2298f6ecf75a2c7ac5a19adafe0a"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 111px; top: 47px; height: auto;" data-block-id="0b04c1f87e7f306106ab21e689910241"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Cold Start</h1>
+</div></div>
+
+<div class="sl-block" data-block-type="code" data-block-id="06eced86ba6e4d9c022f9a167b6c7eeb" style="width: 1040px; height: 102.354px; left: 129px; top: 167.005px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12; font-size: 150%;" data-code-wrap="true"><pre class="bash"><code data-line-numbers="">REPORT RequestId: 6f127cc4-c2d7-4422-9490-774092cf5042	Duration: 1.36 ms	Billed Duration: 100 ms	Memory Size: 128 MB	Max Memory Used: 35 MB	Init Duration: 28.56 ms	</code></pre></div></div>
+<div class="sl-block" data-block-type="code" style="width: 1040px; height: 107.254px; left: 129px; top: 423.005px;" data-block-id="e762a7a9e54c0caf4999ab7a6c8edb8e"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13; font-size: 150%;" data-code-wrap="true"><pre class="bash"><code data-line-numbers="">REPORT RequestId: 6ad595b5-d679-42e2-b790-ab48811cf9cb	Duration: 0.87 ms	Billed Duration: 100 ms	Memory Size: 128 MB	Max Memory Used: 35 MB</code></pre></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="dfaa71a799f6448c6fe21c61a471d334" style="height: auto; width: 600px; left: 320px; top: 323.423px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p>First invocation add Startup Time</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 340px; top: 568.327px;" data-block-id="1551d636b99a9fe68b441fbf11a841ae"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
+<p>Additional runs don't incur overhead</p>
+</div></div>
+<div class="sl-block" data-block-type="line" style="width: auto; height: auto; min-width: 0px; min-height: 0px; left: 667.373px; top: 266px;" data-block-id="ee241270c9243ef4d904564a708f6d4f"><div class="sl-block-content" data-line-x1="0" data-line-y1="57.42268421052633" data-line-x2="0" data-line-y2="0" data-line-color="#ff0000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 16;" data-line-width="3px"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="1" height="57.42268421052633" viewbox="0 0 1 57.42268421052633"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="0.5" y1="57.92268421052633" x2="0.5" y2="2.75"></line><line stroke="#ff0000" stroke-width="3" x1="0.5" y1="57.92268421052633" x2="0.5" y2="2.75"></line><path style="fill: rgba(0,0,0,0);" stroke="#ff0000" stroke-width="3" transform="translate(0,2.25) rotate(0)" d="M 6.75 6.75 L 0 0 L -6.75 6.75"></path></svg></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="5391606717f980f188a252d78c9ce968" style="width: 96.141px; height: 96.141px; left: 72.2794px; top: 239.93px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 17;"><img data-natural-width="720" data-natural-height="720" style="" data-lazy-loaded="" data-src="byte-size-rust/0fb224acd3363eff13f92aaa3fe4e3a1.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="191252fb0eb40411f8342026bbd3af9e" style="width: 96px; height: 96px; left: 72.4204px; top: 480px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 18;"><img data-natural-width="720" data-natural-height="720" style="" data-lazy-loaded="" data-src="byte-size-rust/d5ec80151cbb260ab7bea8af61ed83f1.png"></div></div></section><section data-id="68f2b0203d29373485a0b020b21cfd1b"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 111px; top: 47px; height: auto;" data-block-id="d916dc27eb0092fd99c402bdd548f86b"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Always logs to Cloudwatch</h1>
+</div></div>
+
+<div class="sl-block" data-block-type="text" style="height: auto; width: 428.517px; left: 825.742px; top: 263.923px;" data-block-id="3306088628bfd8b9159d9f8805cd4273"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<p>Each instance gets its own Log Stream in Cloudwatch Logs</p>
+</div></div>
+<div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 763.442px; top: 282px;" data-block-id="d9570b411e8d29261d487fa0f38c7f90"><div class="sl-block-content" data-line-x1="56.3444976076555" data-line-y1="1.4210854715202004e-14" data-line-x2="0" data-line-y2="0" data-line-color="#ff0000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 13;" data-line-width="3px"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="56.3444976076555" height="1" viewbox="0 0 56.3444976076555 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="56.8444976076555" y1="0.5000000000000142" x2="2.75" y2="0.5000000000000006"></line><line stroke="#ff0000" stroke-width="3" x1="56.8444976076555" y1="0.5000000000000142" x2="2.75" y2="0.5000000000000006"></line><path style="fill: rgba(0,0,0,0);" stroke="#ff0000" stroke-width="3" transform="translate(2.25,5.674808449238912e-16) rotate(-90)" d="M 6.75 6.75 L 0 0 L -6.75 6.75"></path></svg></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="9f5370a51fdd39a5ef4fe0fdf583e7f8" style="width: 697.312px; height: 394.342px; left: 72.1302px; top: 144.752px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 10;"><img style="" data-natural-width="1740" data-natural-height="984" data-lazy-loaded="" data-src="byte-size-rust/773bafe633a1523a8e55850b656d8b0b.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 418.091px; left: 861.909px; top: 684px;" data-block-id="aec331b66638c611f1e6b0cad456bc55"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="https://aws.amazon.com/cloudwatch/pricing/" target="_blank">https://aws.amazon.com/cloudwatch/pricing/</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="891aacd9e3f627644b6295bbcf9226df" style="height: auto; width: 265.608px; left: 36.834px; top: 591px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
+<p>Don't be noisy, CWL are $$$$</p>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="da879967085fb27f359b2598d46a097c" style="width: 467px; height: 144px; left: 302.442px; top: 558px;"><div class="sl-block-content" style="z-index: 16;"><img style="" data-natural-width="934" data-natural-height="288" data-src="byte-size-rust/fccea0f717cbfc5c55f4d43eac4200ea.png"></div></div></section></section><section class="stack" data-id="22d835c68d3d7c4acfd18c1d0c4565d5"><section data-id="b3ad4dd3f03a64560d732c0c9c35fb0a"><div class="sl-block" data-block-type="text" style="width: 400px; left: 440px; top: 0px; height: auto;" data-block-id="406c9105bcc4cef57d9545cfd5905aa8"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10; text-align: center;">
+<h1>First Try...</h1>
+</div></div>
+
+
+<div class="sl-block" data-block-type="image" data-block-id="bb41a28e9dacde1249617c0801c4bcdb" style="min-width: 1px; min-height: 1px; width: 712px; height: 565px; left: 80px; top: 97px;"><div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="1701" data-natural-height="1350" data-lazy-loaded="" data-src="byte-size-rust/162bffc7b0b724f736500ca361a22369.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="7b296ee5442250053ad84f64457b42b1" style="height: auto; min-width: 30px; min-height: 30px; width: 372px; left: 908px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<pre><span style="font-size:0.5em"><a href="https://github.com/srijs/rust-aws-lambda" target="_blank">https://github.com/srijs/rust-aws-lambda</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="cb1e7179462d9dc635f290075b430714" style="height: auto; width: 408.919px; left: 814.029px; top: 340.5px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<p style="text-align: left;">First Rust Lambdas were<br>
+pretending to be Go binaries</p>
+</div></div></section><section data-id="3a899d318efee9b1a8341addc304ea57"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 0px; height: auto;" data-block-id="1d04cf6e8aa433f06044e70686f1e2eb"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Became AWS Open Source Project</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="cfd0aa1271c7273fba774d5183d2c06c" style="min-width: 1px; min-height: 1px; width: 954px; height: 465px; left: 163px; top: 200px;"><div class="sl-block-content" style="z-index: 12;"><img data-natural-width="1614" data-natural-height="787" style="" data-lazy-loaded="" data-src="byte-size-rust/0b417805afe753b678c4973af1066438.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="b7e69dd9ea7cdac69bbe7d66db1c2a7b" style="height: auto; min-width: 30px; min-height: 30px; width: 620px; left: 660px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<pre><span style="font-size:0.5em"><a href="https://aws.amazon.com/blogs/opensource/rust-runtime-for-aws-lambda/" target="_blank">https://aws.amazon.com/blogs/opensource/rust-runtime-for-aws-lambda/</a></span></pre>
+</div></div></section><section data-id="d2e5c3f086576f39033f2909d5885a34"><div class="sl-block" data-block-type="text" style="width: 690px; left: 295px; top: 0px; height: auto;" data-block-id="b72ee182fc4ab0f322c114afb2631821"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11; text-align: center;">
+<h1>Events Survived...</h1>
+</div></div>
+
+
+<div class="sl-block" data-block-type="text" style="height: auto; width: 411px; left: 869px; top: 684px;" data-block-id="8bd9fc143e921efb450df3ed30effa82"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<pre><span style="font-size:0.5em"><a href="https://github.com/LegNeato/aws-lambda-events" target="_blank">https://github.com/LegNeato/aws-lambda-events</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="a13c8e0cf842bab484a3f00facc316da" style="min-width: 1px; min-height: 1px; width: 1075px; height: 354px; left: 103px; top: 111px;"><div class="sl-block-content" style="z-index: 13;"><img data-natural-width="1974" data-natural-height="650" style="" data-lazy-loaded="" data-src="byte-size-rust/c61491e6fc62c81bf22d65c0b2ce1049.png"></div></div></section><section data-id="6ba6c56cd56ea8119481385a9bca130b"><div class="sl-block" data-block-type="text" style="width: 1280px; left: 0px; top: 0px; height: auto;" data-block-id="020bf7dc1474b375bea7368aed25ad86"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Building off the Golang SDK</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1047px; height: 179px; left: 214px; top: 144px;" data-block-id="8f4d798c8d3935c0d8d53acd859d8391"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 11; font-size: 150%;"><pre class="go"><code data-line-numbers="">type S3Bucket struct {
+	Name          string         `json:"name"`
+	OwnerIdentity S3UserIdentity `json:"ownerIdentity"`
+	Arn           string         `json:"arn"`
+}
+</code></pre></div></div>
+
+<div class="sl-block" data-block-type="code" data-block-id="dd0974b0add6da7e70b1afd107b4ca0c" style="min-width: 30px; min-height: 30px; width: 1047px; height: 331px; left: 214px; top: 346px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12; font-size: 150%;"><pre class="rust"><code data-line-numbers="">#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub struct S3Bucket {
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    pub name: Option&lt;String&gt;,
+    #[serde(rename = "ownerIdentity")]
+    pub owner_identity: S3UserIdentity,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    pub arn: Option&lt;String&gt;,
+}
+</code></pre></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="01ef86dd573fdd586e20de3dafbdb92b" style="min-width: 1px; min-height: 1px; width: 177px; height: 177px; left: 11px; top: 155px;"><div class="sl-block-content" style="z-index: 13;"><img data-natural-width="3861" data-natural-height="3861" style="" data-lazy-loaded="" data-src="byte-size-rust/8fa328e393e6a688dd89d70099518fb4.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="103cea5bb66b1a2045db8fc6ace67206" style="min-width: 1px; min-height: 1px; width: 177px; height: 177px; left: 11px; top: 431px;"><div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="1024" data-natural-height="1024" data-lazy-loaded="" data-src="byte-size-rust/6d47e32e77a05170583b608d0306e7ed.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="d79733e6171b4e3930f061d67fb9f4e9" style="height: auto; min-width: 30px; min-height: 30px; width: 503px; left: 486px; top: 108px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
+<pre><span style="font-size:0.5em"><a href="https://github.com/aws/aws-lambda-go/tree/master/events" target="_blank">https://github.com/aws/aws-lambda-go/tree/master/events</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 677px; left: 603px; top: 688px;" data-block-id="d6331139c4670b091c0df02c79dc49d8"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 17; font-size: 90%;">
+<pre><span style="font-size:0.5em"><a href="https://github.com/LegNeato/aws-lambda-events/tree/master/aws_lambda_events_codegen" target="_blank">https://github.com/LegNeato/aws-lambda-events/tree/master/aws_lambda_events_codegen</a></span></pre>
+</div></div></section><section data-id="c6a4178eaa427848e4c5287cd7e8f163"><div class="sl-block" data-block-type="text" style="width: 1105px; left: 88px; top: 0px; height: auto;" data-block-id="48e4230c6859a2af601d45367a085e0a"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10; text-align: center;">
+<h1>Well Documented AWS APIs and Events</h1>
+</div></div>
+
+
+<div class="sl-block" data-block-type="text" style="height: auto; width: 602px; left: 678px; top: 681px;" data-block-id="03de8377744b59578bdfaa5e40ab8aa9"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11;">
+<pre><span style="font-size:0.5em"><a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-services.html" target="_blank">https://docs.aws.amazon.com/lambda/latest/dg/lambda-services.html</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="code" data-block-id="7e0579d6c8e87c63fc7293a56feb1726" style="min-width: 30px; min-height: 30px; width: 889.825px; height: 513.561px; left: 195.587px; top: 175.219px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12; font-size: 70%;"><pre class="json"><code data-line-numbers="">{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "awsRegion": "us-east-2",
+      "eventTime": "2019-09-03T19:37:27.192Z",
+      "eventName": "ObjectCreated:Put",
+      "userIdentity": {
+        "principalId": "AWS:AIDAINPONIXQXHT3IKHL2"
+      },
+      "requestParameters": {
+        "sourceIPAddress": "205.255.255.255"
+      },
+      "responseElements": {
+        "x-amz-request-id": "D82B88E5F771F645",
+        "x-amz-id-2": "vlR7PnpV2Ce81l0PRw6jlUpck7Jo5ZsQjryTjKlc5aLWGVHPZLj5NeC6qMa0emYBDXOo6QBU0Wo="
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "828aa6fc-f7b5-4305-8584-487c791949c1",
+        "bucket": {
+          "name": "lambda-artifacts-deafc19498e3f2df",
+          "ownerIdentity": {
+            "principalId": "A3I5XTEXAMAI3E"
+          },
+          "arn": "arn:aws:s3:::lambda-artifacts-deafc19498e3f2df"
+        },
+        "object": {
+          "key": "b21b84d653bb07b05b1e6b33684dc11b",
+          "size": 1305107,
+          "eTag": "b21b84d653bb07b05b1e6b33684dc11b",
+          "sequencer": "0C0F6F405D6ED209E1"
+        }
+      }
+    }
+  ]
+}
+</code></pre></div></div></section><section data-id="3434f2d4cf218a39b253c108e34e25aa">
+<div class="sl-block" data-block-type="text" style="height: auto; width: 586.352px; left: 693.648px; top: 699px;" data-block-id="3cad17bd0af94c4f85cf85a885d4e238"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 10; text-align: right; font-size: 50%;">
+<pre style="text-align:right"><a href="https://www.rusoto.org/usage-and-example.html" target="_blank">https://www.rusoto.org/usage-and-example.html</a></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="width: 1280px; left: 0px; top: 0px; height: auto;" data-block-id="925e86a85963aeef524c9f7d39832086"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>AWS SDK in Rust</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="2460876027c9e17d020f984836241d8d" style="width: 240px; height: 240px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="400" data-natural-height="400" data-lazy-loaded="" data-src="byte-size-rust/ac982826367a29e624a4a0ea685f55c2"></div></div>
+<div class="sl-block" data-block-type="code" data-block-id="5425e344f1270254bab4d7017d34ec3d" style="width: 738.578px; height: 588px; left: 270.711px; top: 111px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13;"><pre class="rust"><code data-line-numbers="">extern crate rusoto_core;
+extern crate rusoto_dynamodb;
+
+use std::default::Default;
+
+use rusoto_core::Region;
+use rusoto_dynamodb::{DynamoDb, DynamoDbClient, ListTablesInput};
+
+fn main() {
+  let client = DynamoDbClient::new(Region::UsEast1);
+  let list_tables_input: ListTablesInput = Default::default();
+
+  match client.list_tables(list_tables_input).sync() {
+    Ok(output) =&gt; {
+      match output.table_names {
+        Some(table_name_list) =&gt; {
+          println!("Tables in database:");
+
+          for table_name in table_name_list {
+            println!("{}", table_name);
+          }
+        }
+        None =&gt; println!("No tables in database!"),
+      }
+    }
+    Err(error) =&gt; {
+      println!("Error: {:?}", error);
+    }
+  }
+}
+</code></pre></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="5ff6b4b9f317b3f799a5144722891ebe" style="height: auto; width: 242.335px; left: 6.18178px; top: 263.699px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p style="text-align: left;">Client for service specific API</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 242.335px; left: 6.18178px; top: 382.952px;" data-block-id="25b0da4a276ffa070d007d2be23c01fb"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
+<p style="text-align:left">Build the Request</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 242.335px; left: 6.18178px; top: 504px;" data-block-id="7967b27001eeb4214243cf6221b06d82"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 16;">
+<p style="text-align:left">Call the API</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 242.335px; left: 6.18178px; top: 588.517px;" data-block-id="be6ad36f87d5a7017e7ee9195f5ce6fe"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 17;">
+<p style="text-align:left">Process the response</p>
+</div></div>
+<div class="sl-block" data-block-type="line" data-block-id="ed1ffacfbcaebc30ef694cf022499554" style="width: auto; height: auto; min-width: 0px; min-height: 0px; left: 178.01px; top: 294.125px;"><div class="sl-block-content" data-line-x1="0" data-line-y1="27.46374641148327" data-line-x2="141.99" data-line-y2="0" data-line-color="#ff0000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 18;" data-line-width="3px"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="141.99" height="27.46374641148327" viewbox="0 0 141.99 27.46374641148327"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="0.5" y1="27.96374641148327" x2="140.28094255986085" y2="0.9272765218986028"></line><line stroke="#ff0000" stroke-width="3" x1="0.5" y1="27.96374641148327" x2="140.28094255986085" y2="0.9272765218986028"></line><path style="fill: rgba(0,0,0,0);" stroke="#ff0000" stroke-width="3" transform="translate(139.78094255986085,0.42727652189860277) rotate(79.053)" d="M 6.75 6.75 L 0 0 L -6.75 6.75"></path></svg></div></div>
+<div class="sl-block" data-block-type="line" style="width: auto; height: auto; min-width: 0px; min-height: 0px; left: 141.995px; top: 313.699px;" data-block-id="7bde98a834e018ec28c80066f48c41f2"><div class="sl-block-content" data-line-x1="0" data-line-y1="108.25299999999999" data-line-x2="177.51153110047846" data-line-y2="0" data-line-color="#ff0000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 19;" data-line-width="3px"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="177.51153110047846" height="108.25299999999999" viewbox="0 0 177.51153110047846 108.25299999999999"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="0.5" y1="108.75299999999999" x2="176.09055830839904" y2="1.6714792068536988"></line><line stroke="#ff0000" stroke-width="3" x1="0.5" y1="108.75299999999999" x2="176.09055830839904" y2="1.6714792068536988"></line><path style="fill: rgba(0,0,0,0);" stroke="#ff0000" stroke-width="3" transform="translate(175.59055830839904,1.1714792068536988) rotate(58.624)" d="M 6.75 6.75 L 0 0 L -6.75 6.75"></path></svg></div></div>
+<div class="sl-block" data-block-type="line" style="width: auto; height: auto; min-width: 0px; min-height: 0px; left: 178.01px; top: 352.952px;" data-block-id="1be3692c4da8d9bb12737a238a7ac345"><div class="sl-block-content" data-line-x1="0" data-line-y1="170.548" data-line-x2="135.00435885167468" data-line-y2="0" data-line-color="#ff0000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 20;" data-line-width="3px"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="135.00435885167468" height="170.548" viewbox="0 0 135.00435885167468 170.548"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="0.5" y1="171.048" x2="134.1078586708493" y2="2.2641675784785136"></line><line stroke="#ff0000" stroke-width="3" x1="0.5" y1="171.048" x2="134.1078586708493" y2="2.2641675784785136"></line><path style="fill: rgba(0,0,0,0);" stroke="#ff0000" stroke-width="3" transform="translate(133.6078586708493,1.7641675784785134) rotate(38.365)" d="M 6.75 6.75 L 0 0 L -6.75 6.75"></path></svg></div></div>
+<div class="sl-block" data-block-type="line" style="width: auto; height: auto; min-width: 0px; min-height: 0px; left: 160px; top: 392.148px;" data-block-id="9047ed0a2d7c2ec461c7379fdadd078c"><div class="sl-block-content" data-line-x1="0" data-line-y1="255.85199999999998" data-line-x2="187.31145454545458" data-line-y2="0" data-line-color="#ff0000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 21;" data-line-width="3px"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="187.31145454545458" height="255.85199999999998" viewbox="0 0 187.31145454545458 255.85199999999998"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="0.5" y1="256.352" x2="186.48233259830783" y2="2.3154709718452793"></line><line stroke="#ff0000" stroke-width="3" x1="0.5" y1="256.352" x2="186.48233259830783" y2="2.3154709718452793"></line><path style="fill: rgba(0,0,0,0);" stroke="#ff0000" stroke-width="3" transform="translate(185.98233259830783,1.815470971845279) rotate(36.208)" d="M 6.75 6.75 L 0 0 L -6.75 6.75"></path></svg></div></div></section><section data-id="cf6b13069f5886b1d151964a2f8b4cc6">
+<div class="sl-block" data-block-type="text" style="height: auto; width: 824.948px; left: 455.052px; top: 702px;" data-block-id="e718323bc9942a0b238215a886d1e506"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 10; text-align: right; font-size: 50%;">
+<pre style="text-align:right"><a href="https://docs.rs/aws_lambda_events/0.2.5/aws_lambda_events/event/sqs/struct.SqsEvent.html" target="_blank">https://docs.rs/aws_lambda_events/0.2.5/aws_lambda_events/event/sqs/struct.SqsEvent.html</a></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="width: 1280px; left: 0px; top: 0px; height: auto;" data-block-id="c2920d062268fa3c3adabc262e520114"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Sample SQS Event</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 240px; height: 240px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="982d70f63ff0b447cfdb39f8f4309676"><div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="128" data-natural-height="128" data-lazy-loaded="" data-src="byte-size-rust/6438a3a228d3a906eac943ebb4390071.png"></div></div>
+<div class="sl-block" data-block-type="code" style="width: 746.999px; height: 404.14px; left: 16.8421px; top: 263.982px;" data-block-id="80b1521063f6f56a958d995c6055af06"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13;"><pre class="json"><code data-line-numbers="">{
+  "Records": [
+    {
+      "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
+      "receiptHandle": "MessageReceiptHandle",
+      "body": "Hello from SQS!",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1523232000000",
+        "SenderId": "123456789012",
+        "ApproximateFirstReceiveTimestamp": "1523232000001"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "7b270e59b47ff90a553787216d55d91d",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
+      "awsRegion": "us-east-1"
+    }
+  ]
+}</code></pre></div></div>
+<div class="sl-block" data-block-type="code" data-block-id="2819b0d8212f42a9bda64f01b18af830" style="width: 721.754px; height: 585.157px; left: 534.561px; top: 97px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 14;"><pre class="rust"><code data-line-numbers="">#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub struct SqsEvent {
+    #[serde(rename = "Records")]
+    pub records: Vec&lt;SqsMessage&gt;,
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub struct SqsMessage {
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    #[serde(rename = "messageId")]
+    pub message_id: Option&lt;String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    #[serde(rename = "receiptHandle")]
+    pub receipt_handle: Option&lt;String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    pub body: Option&lt;String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    #[serde(rename = "md5OfBody")]
+    pub md5_of_body: Option&lt;String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    #[serde(rename = "md5OfMessageAttributes")]
+    pub md5_of_message_attributes: Option&lt;String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_map")]
+    #[serde(default)]
+    pub attributes: HashMap&lt;String, String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_map")]
+    #[serde(default)]
+    #[serde(rename = "messageAttributes")]
+    pub message_attributes: HashMap&lt;String, SqsMessageAttribute&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    #[serde(rename = "eventSourceARN")]
+    pub event_source_arn: Option&lt;String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    #[serde(rename = "eventSource")]
+    pub event_source: Option&lt;String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    #[serde(rename = "awsRegion")]
+    pub aws_region: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub struct SqsMessageAttribute {
+    #[serde(rename = "stringValue")]
+    pub string_value: Option&lt;String&gt;,
+    #[serde(rename = "binaryValue")]
+    pub binary_value: Option&lt;Base64Data&gt;,
+    #[serde(rename = "stringListValues")]
+    pub string_list_values: Vec&lt;String&gt;,
+    #[serde(rename = "binaryListValues")]
+    pub binary_list_values: Vec&lt;Base64Data&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    #[serde(rename = "dataType")]
+    pub data_type: Option&lt;String&gt;,
+}
+</code></pre></div></div></section><section data-id="13faaaeef7d1b00e39a4ffa0b49506f4">
+<div class="sl-block" data-block-type="text" style="height: auto; width: 980.737px; left: 299.263px; top: 702px;" data-block-id="3107bf62c5e0d15d220a6a35440d87fa"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; text-align: right; font-size: 50%;">
+<pre style="text-align:right"><a href="https://docs.rs/aws_lambda_events/0.2.5/aws_lambda_events/event/apigw/struct.ApiGatewayProxyRequest.html" target="_blank">https://docs.rs/aws_lambda_events/0.2.5/aws_lambda_events/event/apigw/struct.ApiGatewayProxyRequest.html</a></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="width: 973.78px; left: 226.22px; top: 0px; height: auto;" data-block-id="3e415691c92fe67fd29f0285842589be"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 12;">
+<h1>Even HTTP is an Event</h1>
+</div></div>
+
+<div class="sl-block" data-block-type="code" style="width: 746.999px; height: 404.14px; left: 16.8421px; top: 263.982px;" data-block-id="8a60cea809b10249ec5a96e66148426b"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13;"><pre class="json"><code data-line-numbers="">{
+  "body": "eyJ0ZXN0IjoiYm9keSJ9",
+  "resource": "/{proxy+}",
+  "path": "/path/to/resource",
+  "httpMethod": "POST",
+  "isBase64Encoded": true,
+  "queryStringParameters": {
+    "foo": "bar"
+  },
+  "multiValueQueryStringParameters": {
+    "foo": [
+      "bar"
+    ]
+  },
+  "pathParameters": {
+    "proxy": "/path/to/resource"
+  },
+  "stageVariables": {
+    "baz": "qux"
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Encoding": "gzip, deflate, sdch",
+    "Accept-Language": "en-US,en;q=0.8",
+    "Cache-Control": "max-age=0",
+    "CloudFront-Forwarded-Proto": "https",
+    "CloudFront-Is-Desktop-Viewer": "true",
+    "CloudFront-Is-Mobile-Viewer": "false",
+    "CloudFront-Is-SmartTV-Viewer": "false",
+    "CloudFront-Is-Tablet-Viewer": "false",
+    "CloudFront-Viewer-Country": "US",
+    "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Custom User Agent String",
+    "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
+    "X-Amz-Cf-Id": "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
+    "X-Forwarded-For": "127.0.0.1, 127.0.0.2",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https"
+  },
+  "multiValueHeaders": {
+    "Accept": [
+      "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+    ],
+    "Accept-Encoding": [
+      "gzip, deflate, sdch"
+    ],
+    "Accept-Language": [
+      "en-US,en;q=0.8"
+    ],
+    "Cache-Control": [
+      "max-age=0"
+    ],
+    "CloudFront-Forwarded-Proto": [
+      "https"
+    ],
+    "CloudFront-Is-Desktop-Viewer": [
+      "true"
+    ],
+    "CloudFront-Is-Mobile-Viewer": [
+      "false"
+    ],
+    "CloudFront-Is-SmartTV-Viewer": [
+      "false"
+    ],
+    "CloudFront-Is-Tablet-Viewer": [
+      "false"
+    ],
+    "CloudFront-Viewer-Country": [
+      "US"
+    ],
+    "Host": [
+      "0123456789.execute-api.us-east-1.amazonaws.com"
+    ],
+    "Upgrade-Insecure-Requests": [
+      "1"
+    ],
+    "User-Agent": [
+      "Custom User Agent String"
+    ],
+    "Via": [
+      "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)"
+    ],
+    "X-Amz-Cf-Id": [
+      "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA=="
+    ],
+    "X-Forwarded-For": [
+      "127.0.0.1, 127.0.0.2"
+    ],
+    "X-Forwarded-Port": [
+      "443"
+    ],
+    "X-Forwarded-Proto": [
+      "https"
+    ]
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "resourceId": "123456",
+    "stage": "prod",
+    "requestId": "c6af9ac6-7b61-11e6-9a41-93e8deadbeef",
+    "requestTime": "09/Apr/2015:12:34:56 +0000",
+    "requestTimeEpoch": 1428582896000,
+    "identity": {
+      "cognitoIdentityPoolId": null,
+      "accountId": null,
+      "cognitoIdentityId": null,
+      "caller": null,
+      "accessKey": null,
+      "sourceIp": "127.0.0.1",
+      "cognitoAuthenticationType": null,
+      "cognitoAuthenticationProvider": null,
+      "userArn": null,
+      "userAgent": "Custom User Agent String",
+      "user": null
+    },
+    "path": "/prod/path/to/resource",
+    "resourcePath": "/{proxy+}",
+    "httpMethod": "POST",
+    "apiId": "1234567890",
+    "protocol": "HTTP/1.1"
+  }
+}</code></pre></div></div>
+<div class="sl-block" data-block-type="code" style="width: 721.754px; height: 585.157px; left: 534.561px; top: 97px;" data-block-id="11d1b9171062daa46613bea18394369b"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 14;"><pre class="rust"><code data-line-numbers="">pub struct ApiGatewayProxyRequest {
+    /// The resource path defined in API Gateway
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    pub resource: Option&lt;String&gt;,
+    /// The url path for the caller
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    pub path: Option&lt;String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    #[serde(rename = "httpMethod")]
+    pub http_method: Option&lt;String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_map")]
+    #[serde(default)]
+    pub headers: HashMap&lt;String, String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_map")]
+    #[serde(default)]
+    #[serde(rename = "multiValueHeaders")]
+    pub multi_value_headers: HashMap&lt;String, Vec&lt;String&gt;&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_map")]
+    #[serde(default)]
+    #[serde(rename = "queryStringParameters")]
+    pub query_string_parameters: HashMap&lt;String, String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_map")]
+    #[serde(default)]
+    #[serde(rename = "multiValueQueryStringParameters")]
+    pub multi_value_query_string_parameters: HashMap&lt;String, Vec&lt;String&gt;&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_map")]
+    #[serde(default)]
+    #[serde(rename = "pathParameters")]
+    pub path_parameters: HashMap&lt;String, String&gt;,
+    #[serde(deserialize_with = "deserialize_lambda_map")]
+    #[serde(default)]
+    #[serde(rename = "stageVariables")]
+    pub stage_variables: HashMap&lt;String, String&gt;,
+    #[serde(rename = "requestContext")]
+    pub request_context: ApiGatewayProxyRequestContext,
+    #[serde(deserialize_with = "deserialize_lambda_string")]
+    #[serde(default)]
+    pub body: Option&lt;String&gt;,
+    #[serde(rename = "isBase64Encoded")]
+    pub is_base64_encoded: Option&lt;bool&gt;,
+}
+</code></pre></div></div>
+<div class="sl-block" data-block-type="image" style="width: 240px; height: 240px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="a8c9234cd08e819cd3b0d14beb2e922a"><div class="sl-block-content" style="z-index: 10;"><img style="" data-natural-width="128" data-natural-height="128" data-lazy-loaded="" data-src="byte-size-rust/6438a3a228d3a906eac943ebb4390071.png"></div></div></section></section><section class="stack" data-id="8f83a481e45b55f9754b3dc513ebf974"><section data-id="bd2187a118b22aeb55e0b61431c437ad"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 81px; height: auto;" data-block-id="50aee989bffdaca17254210642d36d88"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Rust Handler</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1120px; height: 432px; left: 80px; top: 216px;" data-block-id="b1566a9ad0a4b6a081022743fd8b7c30"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 11; font-size: 200%;"><pre class="rust"><code data-line-numbers="">pub trait Handler&lt;E, O&gt; {
+  fn run(&amp;mut self, event: E, ctx: Context) -&gt; 
+  	Result&lt;O, HandlerError&gt;;
+}
+
+#[derive(Debug, Clone)]
+pub struct HandlerError {
+  msg: String,
+  backtrace: Option&lt;backtrace::Backtrace&gt;,
+}</code></pre></div></div></section><section data-id="127e284ae727794abf8ff2ce8c54e261"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 47px; height: auto;" data-block-id="3624e66f93dbeaff80d28eec9993cc97"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Digging Deeper - SerDe!</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1047px; height: 85px; left: 117px; top: 216px;" data-block-id="88102c70b5627c239f0d7fdafd421a9a"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12; font-size: 150%;"><pre class="rust"><code data-line-numbers="">pub type Handler&lt;E, O&gt; = fn(E, Context) -&gt; Result&lt;O, HandlerError&gt;
+</code></pre></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 340px; top: 152px;" data-block-id="a4e31e80d8ba39e3b802a149167f40f5"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<p>You implement:</p>
+</div></div>
+<div class="sl-block" data-block-type="table" data-block-id="94ffa9aff030b84ddbea53016e6bf3f2" style="height: auto; min-width: 120px; min-height: 30px; width: 1121px; left: 79px; top: 352px;"><div class="sl-block-content" style="z-index: 15; text-align: right;" data-table-rows="2" data-table-cols="2"><table><tbody>
+<tr>
+<th style="width: 155px;"><strong>E</strong></th>
+<th> JSON that you want to provide to your Lambda function as input.</th>
+</tr>
+<tr>
+<td><strong>O</strong></td>
+<td><strong>It is the JSON representation of the object returned by the Lambda function. This is present only if the invocation type is RequestResponse.</strong></td>
+</tr>
+</tbody></table></div></div></section><section data-id="1aa1dd943a8ff6da64340a7dcf1dc6a4"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 0px; height: auto;" data-block-id="94193ab1c5bc5fc907353728897441fb"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Our Hander Function</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1200px; height: 548.158px; left: 40px; top: 115.93px;" data-block-id="ccb64af23ad4034f9e725ecd9872448c"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 11; font-size: 125%;"><pre class="rust"><code data-line-numbers="">#[derive(Deserialize, Clone)]
+struct CustomEvent {
+    #[serde(rename = "firstName")]
+    first_name: String,
+}
+
+#[derive(Serialize, Clone)]
+struct CustomOutput {
+    message: String,
+}
+
+fn my_handler(e: CustomEvent, c: lambda::Context) -&gt; Result&lt;CustomOutput, HandlerError&gt; {
+    if e.first_name == "" {
+        error!("Empty first name in request {}", c.aws_request_id);
+        return Err(c.new_error("Empty first name"));
+    }
+
+    Ok(CustomOutput {
+        message: format!("Hello, {}!", e.first_name),
+    })
+}
+</code></pre></div></div>
+
+<div class="sl-block" data-block-type="text" data-block-id="204326d22ad0798af65dc2f318e5e28b" style="height: auto; width: 806.316px; left: 473.684px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; text-align: right;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="https://aws.amazon.com/blogs/opensource/rust-runtime-for-aws-lambda/" target="_blank">https://aws.amazon.com/blogs/opensource/rust-runtime-for-aws-lambda/</a></span></pre>
+</div></div></section><section data-id="38d0e68e66bc57374bf391615f0de6e0"><div class="sl-block" data-block-type="text" style="width: 1168.63px; left: 55.685px; top: 6.01754px; height: auto;" data-block-id="1e19c60bb2a7489b040450efbe6e34b7"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>main starts runtime w/handler</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 923.5px; height: 510.696px; left: 177.135px; top: 104.652px;" data-block-id="b41c73f0eec2ac77575b6ef1e408dd5b"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 11; font-size: 150%;"><pre class="rust"><code data-line-numbers="">#[macro_use]
+extern crate lambda_runtime as lambda;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate log;
+extern crate simple_logger;
+
+use lambda::error::HandlerError;
+
+use std::error::Error;
+
+fn main() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {
+    simple_logger::init_with_level(log::Level::Info)?;
+    lambda!(my_handler);
+    Ok(())
+}
+</code></pre></div></div>
+
+<div class="sl-block" data-block-type="text" data-block-id="2848933b884d22b0e326c7c5682969cf" style="height: auto; width: 1044.77px; left: 116.5px; top: 634.616px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<p>Stuff outside handler persists between runs on same lambda instance<br>
+(Think reusing connections or other "costly" things)</p>
+</div></div></section><section data-id="3e625b6867c099e227972575130141cd"><div class="sl-block" data-block-type="text" style="width: 1168.63px; left: 55.685px; top: 6.01754px; height: auto;" data-block-id="a28ee9bc43440a2f70ddd2555a53c6e6"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Cargo Changes</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 684.064px; height: 368.39px; left: 293.495px; top: 246.738px;" data-block-id="c8b90f9c51e2abf7f1b7d201abf31e00"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 11; font-size: 150%;"><pre class="none"><code data-line-numbers="">[dependencies]
+lambda_runtime = "^0.1"
+serde = "^1"
+serde_json = "^1"
+serde_derive = "^1"
+log = "^0.4"
+simple_logger = "^1"
+
+[[bin]]
+name = "bootstrap"
+path = "src/main.rs"</code></pre></div></div>
+
+<div class="sl-block" data-block-type="text" data-block-id="006b2cf210ddee598fbd5a06a33ea404" style="height: auto; width: 787.876px; left: 240px; top: 132.168px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<p>Lambdas using "provided" runttimes must be named:</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 340px; top: 180px;" data-block-id="03b274da06c872d662860e95cf4a1c14"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<pre style="text-align:center"><strong>bootstrap</strong></pre>
+</div></div></section></section><section class="stack" data-id="6468d6c5306b2c36ef9b89fa8f19c6bf"><section data-id="d967cd3a37d839258dd2a1004613050b"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 274px; height: auto;" data-block-id="0596381d953401e83b20b900ccd809c2"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>So what can you<br>
+build with this?</h1>
+</div></div></section><section data-id="47c83f1a4ac4c159a6dd0b6d391ada66"><div class="sl-block" data-block-type="text" data-block-id="929272902b5333d16b5c1ee2a60eb8a8" style="height: auto; min-width: 30px; min-height: 30px; width: 800px; left: 480px; top: 690px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; text-align: right; font-size: 50%;">
+<pre><a href="https://apievangelist.com/2017/11/06/a-simple-api-using-aws-rds-lambda-and-api-gateway/" target="_blank">https://apievangelist.com/2017/11/06/a-simple-api-using-aws-rds-lambda-and-api-gateway/</a></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="width: 1076px; left: 116px; top: 0px; height: auto;" data-block-id="c082204dfb41cfa3622d9b9775b99955"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 12;">
+<h1>Synchronous Application</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="33d669e2353d575b736a1c0578c8ac65" style="min-width: 1px; min-height: 1px; width: 750px; height: 440px; left: 265px; top: 140px;"><div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="520" data-natural-height="305" data-lazy-loaded="" data-src="byte-size-rust/ac229e2f02aac075ff20e16546e1ed18.jpg"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="8bff29b2db5f067fc8c2cf008942fac1" style="height: auto; min-width: 30px; min-height: 30px; width: 718px; left: 295px; top: 609px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p>Like a public API or marketing tracking pixel</p>
+</div></div></section><section data-id="0414bbf42e7cc5ba957f1d9310878ff3"><div class="sl-block" data-block-type="image" style="width: 826px; height: 584px; left: 229px; top: 97px; min-width: 1px; min-height: 1px;" data-block-id="fdc00246ad58696bb90c3f51fbc6ed73"><div class="sl-block-content" style="z-index: 10;"><img data-natural-width="1654" data-natural-height="1169" style="" data-lazy-loaded="" data-src="byte-size-rust/f2d54b02d5e0e6526b116f94c654e05e.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 522.106px; left: 757.894px; top: 694.442px;" data-block-id="2e561469c024f3e5e3b6d102e39a7c7b"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; text-align: right; font-size: 50%;">
+<pre style="text-align:center"><a href="https://github.com/aws-samples/lambda-refarch-webapp" target="_blank"><span style="font-size:1.0em">https://github.com/aws-samples/lambda-refarch-webapp</span></a></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="width: 1076px; left: 116px; top: 0px; height: auto;" data-block-id="ea126261b1e1a03f76b2c8c840a4e461"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 12;">
+<h1>More Complicated Version</h1>
+</div></div></section><section data-id="b7aba86fb57d9f8bcb51399a5b16a4bf"><div class="sl-block" data-block-type="text" style="height: auto; width: 569.975px; left: 710.025px; top: 702px;" data-block-id="bae97a5f7777ffe57788c866163f358d"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; text-align: right; font-size: 50%;">
+<pre style="text-align: center;"><span style="font-size:1.0em"><a href="https://github.com/aws-samples/lambda-refarch-fileprocessing" target="_blank">https://github.com/aws-samples/lambda-refarch-fileprocessing</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="width: 1163px; left: 49px; top: 0px; height: auto;" data-block-id="67ad723415dab4797db2912c84c20d30"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 12;">
+<h1>Asynchronous File Processing</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="b403516ac8955b9e8cefc6ae8b4fc5e1" style="min-width: 1px; min-height: 1px; width: 1042px; height: 593px; left: 119px; top: 97px;"><div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="650" data-natural-height="370" data-lazy-loaded="" data-src="byte-size-rust/de9c7e3db04321703c0b24356158acce.png"></div></div></section><section data-id="c0dcfdff6781d6349b139a9e392a100a"><div class="sl-block" data-block-type="image" data-block-id="627ab1781c819cd14f80fd0c7c84d54e" style="min-width: 1px; min-height: 1px; width: 1089px; height: 593px; left: 96px; top: 97px;"><div class="sl-block-content" style="z-index: 10;"><img style="" data-natural-width="650" data-natural-height="354" data-lazy-loaded="" data-src="byte-size-rust/efe15b401e05c772f0a80dec16e1a816.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 586.352px; left: 693.648px; top: 690px;" data-block-id="3b704e4001b018cfeb29f7245c292e69"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; text-align: right; font-size: 50%;">
+<pre style="text-align: center;"><a href="https://github.com/aws-samples/lambda-refarch-streamprocessing" target="_blank">https://github.com/aws-samples/lambda-refarch-streamprocessing</a></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="width: 1280px; left: 0px; top: 0px; height: auto;" data-block-id="1f11afa1321a98fd2b67271b0898a3cd"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 13;">
+<h1>Asynchronous Stream Processing</h1>
+</div></div></section><section data-id="fc69bba39379a0ea988fb5cfaeade5be"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 109.558px; top: 39.6924px; height: auto;" data-block-id="82a5e9f6660ac2313f773174c260d0d6"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Manual/SAM/Serverless</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="74ab2d721ac18754b36d0ae1ec5ef08b" style="width: 175.573px; height: 249.809px; left: 552.214px; top: 288px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="149" data-natural-height="212" style="" data-lazy-loaded="" data-src="byte-size-rust/deface22fa7ee0bfb7fa9a70ca835a02.jpg"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="9011805c6cd93bd0afa63a7b95ef2079" style="width: 249.809px; height: 249.809px; left: 915.096px; top: 288px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 12;"><img data-natural-width="1500" data-natural-height="1500" style="" data-lazy-loaded="" data-src="byte-size-rust/599090d504f038aa4a0b29c127fd5af2.png"></div></div>
+<div class="sl-block" data-block-type="image" style="width: 211.438px; height: 281.847px; left: 134.281px; top: 271.981px; min-width: 1px; min-height: 1px;" data-block-id="d64877d8fdc9d65ae15a20a4da0fb647"><div class="sl-block-content" style="z-index: 14;"><img data-natural-width="1000" data-natural-height="1333" style="" data-lazy-loaded="" data-src="byte-size-rust/c890fe9d9160be85a2963d8bc61b5662.png"></div></div></section></section><section class="stack" data-id="f0b49531799978473873e2c2d9879c29"><section data-id="59f4dcadc480424c0a19495ed7ebc1c8"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 109.558px; top: 40.6924px; height: auto;" data-block-id="dbbe4f1dc8a27a7ffb4a173f0a685d45"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1 style="text-align: right;">On a Mac cross<br>
+compile with Docker</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" data-block-id="1fd460be6c119d37f3614f492f355960" style="width: 1238.24px; height: 163.229px; left: 28.438px; top: 299.105px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 11; font-size: 150%;"><pre class="bash"><code data-line-numbers="">$ docker pull clux/muslrust
+$ docker run -v $PWD:/volume --rm -t clux/muslrust cargo build --release
+
+$ zip -j hello-world.zip ./target/x86_64-unknown-linux-musl/release/bootstrap</code></pre></div></div>
+
+<div class="sl-block" data-block-type="text" data-block-id="1ebd0eb884a1a7ac4ec57a3ff08f3370" style="height: auto; width: 600px; left: 340px; top: 537px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<p>Can be kinda slow...</p>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 211.438px; height: 281.847px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="c87eb5035684c987e84c10b2c8486301"><div class="sl-block-content" style="z-index: 13;"><img data-natural-width="1000" data-natural-height="1333" style="" data-lazy-loaded="" data-src="byte-size-rust/c890fe9d9160be85a2963d8bc61b5662.png"></div></div></section><section data-id="cfabcdc41cf7e5a591e2df5a5d7f14ef"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 109.558px; top: 40.6924px; height: auto;" data-block-id="478cbfad8115528d3501d37c19715598"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1 style="text-align:right">On a Mac cross<br>
+compile directly</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1238.24px; height: 434.106px; left: 20.88px; top: 249.809px;" data-block-id="b0e2a3680787489770d0eb25ab6e3bbb"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12; font-size: 150%;"><pre class="bash"><code data-line-numbers="">$ rustup target add x86_64-unknown-linux-musl
+$ brew install filosottile/musl-cross/musl-cross
+$ ln -s /usr/local/bin/x86_64-linux-musl-gcc /usr/local/bin/musl-gcc
+
+$ cat .cargo/config
+[target.x86_64-unknown-linux-musl]
+linker = "x86_64-linux-musl-gcc"
+
+$ cargo build --target=x86_64-unknown-linux-musl --release
+
+$ file target/x86_64-unknown-linux-musl/release/bootstrap
+.../bootstrap: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, with debug_info, not stripped
+
+$ zip -j hello-world.zip ./target/x86_64-unknown-linux-musl/release/bootstrap</code></pre></div></div>
+
+<div class="sl-block" data-block-type="text" data-block-id="05c7509e4790beb247f4d5df2700664c" style="height: auto; width: 188.772px; left: 305.614px; top: 596.219px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13; color: rgb(255, 0, 0);">
+<p><strong>^--  Correct!</strong></p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 471.93px; left: 787.19px; top: 280.061px;" data-block-id="9c31ab2306522d0bd4e4e262429f28e6"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14; color: rgb(255, 0, 0);">
+<p><strong>&lt;--  Takes 30 min - get coffee!</strong></p>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="389d853f66ac1df24d1c4febf360ce31" style="height: auto; width: 656.491px; left: 623.509px; top: 683.915px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="https://aws.amazon.com/blogs/opensource/rust-runtime-for-aws-lambda/" target="_blank">https://aws.amazon.com/blogs/opensource/rust-runtime-for-aws-lambda/</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 211.438px; height: 281.847px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="0f718d0c0964d3a6e31180e7db9fcc9a"><div class="sl-block-content" style="z-index: 10;"><img data-natural-width="1000" data-natural-height="1333" style="" data-lazy-loaded="" data-src="byte-size-rust/c890fe9d9160be85a2963d8bc61b5662.png"></div></div></section><section data-id="b57a1a36da69ec58f9296fca31a80a37"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 109.558px; top: 40.6924px; height: auto;" data-block-id="4a354c571f34ef66d5ec3fd3f8455f2d"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1 style="text-align:right">Upload function<br>
+with AWS CLI</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1238.24px; height: 216.562px; left: 28.438px; top: 299.105px;" data-block-id="8ff02d57f8bb31310c0ae5e4e7e37e62"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 11; font-size: 150%;"><pre class="bash"><code data-line-numbers="">$ aws lambda create-function \
+    --function-name hello-world \
+    --runtime provided \
+    --zip-file fileb://hello-world.zip \
+    --handler NOTUSED \
+    --role arn:aws:iam::123456789012:role/service-role/hello-world</code></pre></div></div>
+<div class="sl-block" data-block-type="image" style="width: 211.438px; height: 281.847px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="267afe5c74789ee3747d11c8b0e1b66f"><div class="sl-block-content" style="z-index: 12;"><img data-natural-width="1000" data-natural-height="1333" style="" data-lazy-loaded="" data-src="byte-size-rust/c890fe9d9160be85a2963d8bc61b5662.png"></div></div></section><section data-id="2e195e6e92647de67931ca2e5d226770"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 109.558px; top: 39.6924px; height: auto;" data-block-id="4fd0ebdc929557a86c94c351051085be"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1 style="text-align:right">Or deploy with fav tools</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 249.584px; height: 250px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="f7f7e4464eca397fddb9d570c4a4c2d2"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="300" data-natural-height="300" style="" data-lazy-loaded="" data-src="byte-size-rust/b546d180d30267962df9a318f9b076d8.png"></div></div>
+<div class="sl-block" data-block-type="code" style="width: 1010.7px; height: 270.525px; left: 142.208px; top: 258.526px;" data-block-id="6536bb505d281e9d5c2409b54a097923"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12; font-size: 150%;"><pre class="bash"><code data-line-numbers="">resource "aws_lambda_function" "hello-world" {
+  function_name    = "hello-world"
+  filename         = "hello-world.zip"
+  source_code_hash = "${base64sha256(file("hello-world.zip"))}"
+  runtime          = "provided"
+  handler          = "NOTUSED"
+  role             = aws_iam_role.hello-world.arn
+}</code></pre></div></div></section><section data-id="05237d506ac677e86981ab4e38145cfe"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 109.558px; top: 39.6924px; height: auto;" data-block-id="96f6fa27a7c35ce78321fbebcb830fa9"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1 style="text-align:right">Manually invoke</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1104.91px; height: 343.93px; left: 80px; top: 304.07px;" data-block-id="03c4eb1d3bbc64dd835daefd51ee79b2"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 11; font-size: 150%;"><pre class="bash"><code data-line-numbers="">$ aws lambda invoke \
+    --function-name hello-world \
+    --payload '{"firstName":"Steve"}' response.json
+{
+    "StatusCode": 200,
+    "ExecutedVersion": "$LATEST"
+}
+
+$ cat response.json
+{"message":"Hello, Steve!"}</code></pre></div></div>
+<div class="sl-block" data-block-type="image" style="width: 211.438px; height: 281.847px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="f01d99fe3d99b6069106d241012f7df1"><div class="sl-block-content" style="z-index: 12;"><img data-natural-width="1000" data-natural-height="1333" style="" data-lazy-loaded="" data-src="byte-size-rust/c890fe9d9160be85a2963d8bc61b5662.png"></div></div></section><section data-id="c0eda5f39bcca4e1000d3dbd7cf270c8"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 109.558px; top: 39.6924px; height: auto;" data-block-id="67ff1f9a46c7ca386fa4a70cf449a8f3"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1 style="text-align:right">Invoke in AWS Console</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 191.053px; height: 191.053px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="d9457c3bd2609183341ec0256ecc8fd3"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="250" data-natural-height="250" style="" data-lazy-loaded="" data-src="byte-size-rust/4f1a4ef79a5d262e509e00b365fee69e.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="1859e3623d4cf2f1e8cb9cf55dd1fb81" style="width: 1075px; height: 554.516px; left: 110.358px; top: 165.381px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="2148" data-natural-height="1108" data-lazy-loaded="" data-src="byte-size-rust/0b40ef89d05d96eeef2507f8f77bf5d8.jpg"></div></div></section><section data-id="5f09fcbfbf15ab8ec09e145f38527772"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 109.558px; top: 39.6924px; height: auto;" data-block-id="e01acff16c99f6d5a0c17248010cab85"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1 style="text-align:right">Must Grant Permissions<br>
+for Services to invoke</h1>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1099.63px; height: 396.892px; left: 90.185px; top: 244.983px;" data-block-id="dafb914f55ee80bf0642187504a20f51"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12;"><pre class="bash"><code data-line-numbers="">$ aws lambda add-permission \
+    --function-name hello-world \
+    --action lambda:InvokeFunction \
+    --statement-id sqs \
+    --principal sqs.amazonaws.com
+
+$ aws lambda get-policy --function-name hello-world | jq -r '.Policy' | prettier --stdin --parser json
+{
+  "Version": "2012-10-17",
+  "Id": "default",
+  "Statement": [
+    {
+      "Sid": "sqs",
+      "Effect": "Allow",
+      "Principal": { "Service": "sqs.amazonaws.com" },
+      "Action": "lambda:InvokeFunction",
+      "Resource": "arn:aws:lambda:us-east-2:123456789012:function:hello-world"
+    }
+  ]
+}</code></pre></div></div>
+<div class="sl-block" data-block-type="image" style="width: 210.519px; height: 280.622px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="abc21f8d1d4c4882b127f3c3267e74d4"><div class="sl-block-content" style="z-index: 10;"><img data-natural-width="1000" data-natural-height="1333" style="" data-lazy-loaded="" data-src="byte-size-rust/c890fe9d9160be85a2963d8bc61b5662.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="6f4c6f769c8233c5f6cdbdca837251f0" style="height: auto; width: 869.815px; left: 212.65px; top: 641.875px;"><div class="sl-block-style" style="z-index: 13; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<p>Default rules are nobody has permissions<br>
+to do anything - even AWS Services</p>
+</div></div></div></section><section data-id="6e4e8a8d3e0db771c3b58232976f71ec"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 109.558px; top: 39.6924px; height: auto;" data-block-id="299c3e535c2fa5b8ba89bace201b87e8"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1 style="text-align:right">Or deploy with fav tools</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 249.584px; height: 250px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="946ee61cbd8173ebb3e687a9006271c5"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="300" data-natural-height="300" style="" data-lazy-loaded="" data-src="byte-size-rust/b546d180d30267962df9a318f9b076d8.png"></div></div>
+<div class="sl-block" data-block-type="code" style="width: 1007.03px; height: 211.731px; left: 136.485px; top: 326.135px;" data-block-id="3c0988a62aa72aafdffb90945d99d649"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 12; font-size: 150%;"><pre class="none"><code data-line-numbers="">resource "aws_lambda_permission" "sqs-invokes-hello-world" {
+  function_name = aws_lambda_function.hello-world.function_name
+  action        = "lambda:InvokeFunction"
+  statement_id  = "sqs"
+  principal     = "sqs.amazonaws.com"
+}</code></pre></div></div></section></section><section class="stack" data-id="e0f4d6bb8c5e564ddf950b6945298f9e"><section data-id="f9795abc4819f6465e14681cdb859d7b"><div class="sl-block" data-block-type="text" style="width: 1104.43px; left: 175.57px; top: 0px; height: auto;" data-block-id="cda24bffa310be8fb45cc50706c84710"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Serverless Application Model</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 175.573px; height: 249.809px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="de8b002be4f1fc83d0f983de12ff00d1"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="149" data-natural-height="212" style="" data-lazy-loaded="" data-src="byte-size-rust/deface22fa7ee0bfb7fa9a70ca835a02.jpg"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="661b7589a2167b07faa8e18f63a0e3d2" style="height: auto; width: 358.616px; left: 915.085px; top: 694.078px;"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre><a href="https://aws.amazon.com/serverless/sam/" target="_blank">https://aws.amazon.com/serverless/sam/</a></pre>
+</div></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="a9bc698ca6bd9093ea762c3a36dc3cfa" style="height: auto; width: 916.05px; left: 226.625px; top: 151.491px;"><div class="sl-block-style" style="z-index: 13; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<ul>
+	<li style="text-align:left">Command Line Tools</li>
+	<li style="text-align:left">Processes YAML-ish files into CloudFormation Templates</li>
+	<li style="text-align:left">Builds, packages, uploads to s3 for deployment, deploys via CloudFormation</li>
+	<li style="text-align:left">AWS Only</li>
+	<li style="text-align:left">Local Execution Environment via Docker</li>
+</ul>
+</div></div></div>
+<div class="sl-block" data-block-type="code" data-block-id="83ab5298bc169969e29ef7e16575db54" style="width: 589.649px; height: 90.877px; left: 345.175px; top: 403.404px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 14; font-size: 150%;"><pre class="bash"><code data-line-numbers="">brew tap aws/tap
+brew install aws-sam-cli</code></pre></div></div></section><section data-id="2220ef1e2a7c3255c9a9f11240beb5c5"><div class="sl-block" data-block-type="text" style="width: 1104.43px; left: 175.57px; top: 0px; height: auto;" data-block-id="f0fe2b39d296e1991035cdab51012973"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>SAM Deploy Templates</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 175.573px; height: 249.809px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="2ddc7abb7b7fa7c2d70a3ce713b2335f"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="149" data-natural-height="212" style="" data-lazy-loaded="" data-src="byte-size-rust/deface22fa7ee0bfb7fa9a70ca835a02.jpg"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 358.616px; left: 915.085px; top: 694.078px;" data-block-id="94f23f1afa208356d121a84a43d78af6"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre><a href="https://aws.amazon.com/serverless/sam/" target="_blank">https://aws.amazon.com/serverless/sam/</a></pre>
+</div></div></div>
+<div class="sl-block" data-block-type="code" style="width: 1079.48px; height: 395.438px; left: 100.26px; top: 259.544px;" data-block-id="8433850e5b8a346348339bbf8e4193e1"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13; font-size: 150%;"><pre class="bash"><code data-line-numbers="">AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Hello World Function
+
+Resources:
+  HelloRustFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: sam-hello-world
+      Handler: NOTUSED
+      Runtime: provided
+      CodeUri: hello-world.zip
+      Role: arn:aws:iam::123456789012:role/service-role/hello-world
+</code></pre></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="7720a0619d012c0cc931dfe68a66ad73" style="height: auto; width: 600px; left: 340px; top: 166.897px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p>deploy-hello-world.yaml</p>
+</div></div></section><section data-id="c86432de25dabbad82b8183732b4aed0"><div class="sl-block" data-block-type="text" style="width: 1104.43px; left: 175.57px; top: 0px; height: auto;" data-block-id="eccf78aeb1a1309cb3caa3690f9e56ed"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>SAM Packaging/S3</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 175.573px; height: 249.809px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="5edc50251f4b7ca79445376a2cd9e7ed"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="149" data-natural-height="212" style="" data-lazy-loaded="" data-src="byte-size-rust/deface22fa7ee0bfb7fa9a70ca835a02.jpg"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 358.616px; left: 915.085px; top: 694.078px;" data-block-id="ea7ca1840d3a602b6891ff4807d4ff3e"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre><a href="https://aws.amazon.com/serverless/sam/" target="_blank">https://aws.amazon.com/serverless/sam/</a></pre>
+</div></div></div>
+<div class="sl-block" data-block-type="code" style="width: 884.386px; height: 155.438px; left: 235.614px; top: 116.386px;" data-block-id="4fffaf69cbd186c2eb9a43628d2c1f4c"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13; font-size: 150%;"><pre class="bash"><code data-line-numbers="">sam package 
+  --template-file deploy-hello-world.yaml \
+  --s3-bucket chicago-rust-s3 \
+  --output-template-file cf-deploy-hello-world.yaml
+  
+  </code></pre></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 331.579px; top: 278.99px;" data-block-id="71c83106fce8b330999a8c02b82daa50"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p>cf-deploy-hello-world.yaml</p>
+</div></div>
+<div class="sl-block" data-block-type="code" style="width: 1134.21px; height: 396.634px; left: 72.895px; top: 323.366px;" data-block-id="4593b66d54f778845e4982ecee602413"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 15; font-size: 150%;"><pre class="bash"><code data-line-numbers="">AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Hello World Function
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: sam-hello-world
+      Handler: NOTUSED
+      Runtime: provided
+      MemorySize: 128
+      CodeUri: s3://chicago-rust-s3/cebcadfd6fbdd2b1bc570f18ec1b562c
+      Role: arn:aws:iam::123456789012:role/service-role/hello-world</code></pre></div></div></section><section data-id="200098152b60c04423b1527982232c6e"><div class="sl-block" data-block-type="text" style="width: 1104.43px; left: 175.57px; top: 0px; height: auto;" data-block-id="b8297339e149b5dffb77fc84550423b2"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>SAM Deploy Cloudformation</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 175.573px; height: 249.809px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="9fae6d38b6d2c22d9dd9e7c2ea70af72"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="149" data-natural-height="212" style="" data-lazy-loaded="" data-src="byte-size-rust/deface22fa7ee0bfb7fa9a70ca835a02.jpg"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 358.616px; left: 915.085px; top: 694.078px;" data-block-id="db00bd303b4ea66878b2ebed8fbca985"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre><a href="https://aws.amazon.com/serverless/sam/" target="_blank">https://aws.amazon.com/serverless/sam/</a></pre>
+</div></div></div>
+<div class="sl-block" data-block-type="code" style="width: 884.386px; height: 133.423px; left: 235.614px; top: 116.386px;" data-block-id="fddcc63f7e0fa5d7c23e624184382cd5"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13; font-size: 150%;"><pre class="bash"><code data-line-numbers="">sam deploy \
+  --template-file cf-deploy-hello-world.yaml \
+  --stack-name sam-hello-world \
+  --capabilities CAPABILITY_NAMED_IAM</code></pre></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="546c2871dc28cb33f2d699b549ff43be" style="width: 822px; height: 464.698px; left: 266.823px; top: 253.319px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 14;"><img data-natural-width="2388" data-natural-height="1350" style="" data-lazy-loaded="" data-src="byte-size-rust/29e01fb788d5df5160e24b5cf946be85.jpg"></div></div></section><section data-id="dfa58e7a8081dffaf1811a1c5e029486"><div class="sl-block" data-block-type="text" style="width: 1104.43px; left: 175.57px; top: 0px; height: auto;" data-block-id="9ac1461109182c2dc26d6996ec855636"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>SAM Local Testing</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 175.573px; height: 249.809px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="951d172a8cb0f6bfb157f09af3a8430d"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="149" data-natural-height="212" style="" data-lazy-loaded="" data-src="byte-size-rust/deface22fa7ee0bfb7fa9a70ca835a02.jpg"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 358.616px; left: 915.085px; top: 694.078px;" data-block-id="d2b55449accb6f7ceb1aa45a9c8ffd34"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre><a href="https://aws.amazon.com/serverless/sam/" target="_blank">https://aws.amazon.com/serverless/sam/</a></pre>
+</div></div></div>
+<div class="sl-block" data-block-type="code" style="width: 925.087px; height: 529.212px; left: 257.457px; top: 144px;" data-block-id="0caca9412091831a80274262d8b70197"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13; font-size: 125%;"><pre class="bash"><code data-line-numbers="">$ sam local generate-event sqs receive-message
+{
+  "Records": [
+    {
+      "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
+      "receiptHandle": "MessageReceiptHandle",
+      "body": "Hello from SQS!",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1523232000000",
+        "SenderId": "123456789012",
+        "ApproximateFirstReceiveTimestamp": "1523232000001"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "7b270e59b47ff90a553787216d55d91d",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
+      "awsRegion": "us-east-1"
+    }
+  ]
+}</code></pre></div></div></section><section data-id="bdbfa5d9be601d9a2011f147542a2156"><div class="sl-block" data-block-type="text" style="width: 1104.43px; left: 175.57px; top: 0px; height: auto;" data-block-id="7e2a8ea9d2451d25036598c0d36248e7"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>SAM Local Testing</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 175.573px; height: 249.809px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="d4a682c2182dece2d4b100606ff03422"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="149" data-natural-height="212" style="" data-lazy-loaded="" data-src="byte-size-rust/deface22fa7ee0bfb7fa9a70ca835a02.jpg"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 358.616px; left: 915.085px; top: 694.078px;" data-block-id="2f73c369d86f02e29d7f8bc036b848fe"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre><a href="https://aws.amazon.com/serverless/sam/" target="_blank">https://aws.amazon.com/serverless/sam/</a></pre>
+</div></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="e2827a2ff30a2a78386a2344e85b44e1" style="width: 1273.7px; height: 253.046px; left: 2px; top: 305.477px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="2406" data-natural-height="478" data-lazy-loaded="" data-src="byte-size-rust/9e1d605289aeb61c27111ee5d85fe7c4.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="bcb7eaa81bdb19919e61ec8835f1b6d2" style="height: auto; width: 960px; left: 240px; top: 162px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<pre>Uses Docker lambci/lambda:provided container as runtime environment</pre>
+</div></div></section><section data-id="a3c63caa337c4fd6f1433ed9384b8cb7"><div class="sl-block" data-block-type="text" style="width: 1104.43px; left: 175.57px; top: 0px; height: auto;" data-block-id="7ba3e0a4d3f73b1d2ffc7d1780df4927"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Using Docker Directly</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 252.381px; height: 212px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="a4a7cc8e5e880d87ab2e61d7ab844c4b"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="2500" data-natural-height="2100" style="" data-lazy-loaded="" data-src="byte-size-rust/56110e76082a06b5bfa7e319b0e6d756.svg"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 358.616px; left: 915.085px; top: 694.078px;" data-block-id="9fea38d41ea4c1a6c547fb108689b1ff"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre><a href="https://hub.docker.com/r/lambci/lambda/" target="_blank">https://hub.docker.com/r/lambci/lambda/</a></pre>
+</div></div></div>
+<div class="sl-block" data-block-type="code" data-block-id="8aee79f1dcda61f4d60a844ca3b06029" style="width: 1111.05px; height: 350.527px; left: 84.475px; top: 244.947px;"><div class="sl-block-style" style="z-index: 13; transform: rotate(0deg);"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13; font-size: 125%;"><pre class="bash"><code data-line-numbers="">$ docker run --rm \
+  -v "$PWD/target/x86_64-unknown-linux-musl/release/":/var/task:ro,delegated \
+  lambci/lambda:provided \
+  handler \
+  '{"firstName": "Steve"}'
+START RequestId: a7ac181c-ded5-1b69-5f5e-a7f1f3d30c64 Version: $LATEST
+2020-01-27 17:29:55,923 INFO  [lambda_runtime::runtime] Received new event with AWS request id: a7ac181c-ded5-1b69-5f5e-a7f1f3d30c64
+2020-01-27 17:29:55,924 INFO  [lambda_runtime::runtime] Response for a7ac181c-ded5-1b69-5f5e-a7f1f3d30c64 accepted by Runtime API
+END RequestId: a7ac181c-ded5-1b69-5f5e-a7f1f3d30c64
+REPORT RequestId: a7ac181c-ded5-1b69-5f5e-a7f1f3d30c64	Init Duration: 59.08 ms	Duration: 4.01 ms	Billed Duration: 100 ms	Memory Size: 1536 MB	Max Memory Used: 9 MB
+
+{"message":"Hello, Steve!"}</code></pre></div></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="2857c86884f766506c0c315b78a8c8ba" style="height: auto; width: 710.877px; left: 383.516px; top: 144px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p>Can still use Docker environments to test if using other means of deployment (i.e. terraform, etc)</p>
+</div></div></section><section data-id="3cac9033f123fa7883d58cb3fd2ea622"><div class="sl-block" data-block-type="text" style="width: 1104.43px; left: 175.57px; top: 0px; height: auto;" data-block-id="55ce51ddd7b93a148dbf66cdc29f4330"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>LocalStack</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 349.682px; height: 183px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="0c6ca911009f238de3d4de378b703a36"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="300" data-natural-height="157" style="" data-lazy-loaded="" data-src="byte-size-rust/99c27f16b6b61786a08d0929986663cc.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 358.616px; left: 915.085px; top: 694.078px;" data-block-id="27715c3090754de62c29dfbc759e378e"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre style="text-align: right;"><span style="font-size:1.0em"><a href="https://localstack.cloud/" target="_blank">https://localstack.cloud/</a></span></pre>
+</div></div></div>
+
+<div class="sl-block" data-block-type="text" style="height: auto; width: 862.762px; left: 396.638px; top: 116.629px;" data-block-id="2981ab50df20eb8d6c66ec22e9a48864"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<p>Mock AWS Services for local development</p>
+
+<p>(override API endpoints to point at local Docker containers)</p>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="43d01ff09ee55e061a5f3e389ff652a3" style="width: 812.685px; height: 385.209px; left: 233.657px; top: 239.396px;"><div class="sl-block-content" style="z-index: 14;"><img data-natural-width="1692" data-natural-height="802" style="" data-src="byte-size-rust/cf814272cf87ddaabc2c832193993114.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 899.582px; left: 1px; top: 634px;" data-block-id="42d14c3bb99aa111cbc067f71ff8dc01"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
+<p>Free and Pro Tiers</p>
+
+<p>(Pro gets more services, tools, and supports a great project)</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 330.013px; left: 74.9935px; top: 249px;" data-block-id="6808e0429d0ced38d9a07138e35d6bfd"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 16;">
+<p>Can also be used to run your Lambdas</p>
+</div></div></section></section><section class="stack" data-id="ba0b5f10fb03e0518d042562a64db585"><section data-id="9461b68231d559fbe15e120ded1fb44c"><div class="sl-block" data-block-type="text" style="width: 1147.8px; left: 132.2px; top: 0px; height: auto;" data-block-id="71210761a5a241e72f1a160e84dc0fef"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Serverless</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 249.809px; height: 249.809px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="43a47e3f6e7b619bad80b40e10d4a03e"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="1500" data-natural-height="1500" style="" data-lazy-loaded="" data-src="byte-size-rust/599090d504f038aa4a0b29c127fd5af2.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 217.528px; left: 1056.17px; top: 694.078px;" data-block-id="90e13fdb4130c92d59e8a2a65053e5e0"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre><a href="https://serverless.com/" target="_blank">https://serverless.com/</a>
+</pre>
+</div></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 916.05px; left: 311.026px; top: 138px;" data-block-id="4876e57d369fb171f8f28f331860e971"><div class="sl-block-style" style="z-index: 13; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;" dir="ui">
+<ul>
+	<li style="text-align:left">Command Line Tools</li>
+	<li style="text-align:left">Processes (more) YAML-ish files into CloudFormation Templates - mixed syntax since cf functions can be used</li>
+	<li style="text-align:left">Builds, packages, uploads to s3 for deployment</li>
+	<li style="text-align:left"><strong>Multi-Cloud Support</strong></li>
+	<li style="text-align:left">Local Execution Environment via Docker</li>
+	<li style="text-align:left">
+<strong>Paid PRO version</strong> includes:
+	<ul>
+		<li style="text-align:left">dashboard</li>
+		<li style="text-align:left">monitoring</li>
+		<li style="text-align:left">alerts</li>
+		<li style="text-align:left">ci/cd</li>
+		<li style="text-align:left">rainbows</li>
+		<li style="text-align:left">unicorns</li>
+	</ul>
+	</li>
+</ul>
+</div></div></div></section><section data-id="f27994974216193f27f06f87fcfa661c"><div class="sl-block" data-block-type="text" style="width: 1147.8px; left: 132.2px; top: 0px; height: auto;" data-block-id="bec9e1ca8d73872d43514b7ca62cb2ea"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Serverless vs SAM</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 249.809px; height: 249.809px; left: 0px; top: 0px; min-width: 1px; min-height: 1px;" data-block-id="fe5b88977b02f8de36ab6f6e16e5e822"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="1500" data-natural-height="1500" style="" data-lazy-loaded="" data-src="byte-size-rust/599090d504f038aa4a0b29c127fd5af2.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 690.51px; left: 589.49px; top: 702px;" data-block-id="00f8e7f436430236f94b7cc0aa9cff92"><div class="sl-block-style" style="z-index: 12; transform: rotate(0deg);"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; font-size: 50%;">
+<pre><a href="https://sanderknape.com/2018/02/comparing-aws-sam-with-serverless-framework/" target="_blank">https://sanderknape.com/2018/02/comparing-aws-sam-with-serverless-framework/</a>
+</pre>
+</div></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="73a5ac51275eec1000f5e322bff8c73d" style="width: 753.42px; height: 446.923px; left: 6.9614px; top: 216px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 13;"><img data-natural-width="1792" data-natural-height="1063" style="" data-lazy-loaded="" data-src="byte-size-rust/4cfee372b2ce0e5c3316f9713088f8da.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="1d608d10557c22428c9c684698f928e3" style="width: 229.614px; height: 398.191px; left: 1005.19px; top: 105.809px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 15;"><img data-natural-width="474" data-natural-height="822" style="" data-lazy-loaded="" data-src="byte-size-rust/579cacbb10a661fe2e756cac2b165f8f.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="541c5fac6a9a62d8d3250a3245349f5c" style="width: 444.912px; height: 445.782px; left: 611.313px; top: 229.741px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 14;"><img data-natural-width="1022" data-natural-height="1024" style="" data-lazy-loaded="" data-src="byte-size-rust/69fb26d13f083ca326e0dbbfacf8fbbc.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="2b36b915438f80d817d4ec50dcba46d4" style="height: auto; width: 600px; left: 327.368px; top: 105.809px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 16;">
+<p>Check out Sander's blog post for great comparison</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 358.596px; left: 41.404px; top: 576px;" data-block-id="db1317e9ce5873eb0009e604a2fcfa09"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 17;">
+<p style="text-align: left;">In the end its all just json/yaml representations</p>
+</div></div></section></section><section class="stack" data-id="8c5a1b141e5f0333dacb3b2eca22c8ed"><section data-id="a97d028f194c3e4c6b2bb68b90b5fe05">
+<div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 269.79px; height: auto;" data-block-id="50a8ca7be77aa1b61ede11341ed87cc7"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 12;">
+<h1>Other Resources To Read/Watch</h1>
+</div></div></section><section data-id="74d8e51e3342fde1808a21249e399b62"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 90.7719px; top: 12.9474px; height: auto;" data-block-id="b3b7c276955b9c7288e55f90d8c18f47"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Step Functions</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="35715a77f23b55c102591e0cb076c153" style="width: 905.001px; height: 558.114px; left: 176.271px; top: 125.886px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="994" data-natural-height="613" style="" data-lazy-loaded="" data-src="byte-size-rust/cbfe83757cb2349898145f7305fbe960.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="b373a57cc42463973c7302db0fb02eec" style="height: auto; width: 960px; left: 320px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<pre style="text-align:right"><span style="font-size:0.5em"><a href="https://aws.amazon.com/getting-started/tutorials/create-a-serverless-workflow-step-functions-lambda/" target="_blank">https://aws.amazon.com/getting-started/tutorials/create-a-serverless-workflow-step-functions-lambda/</a></span></pre>
+</div></div></section><section data-id="3e454852deac7941925f921511e0bef5"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 90.7719px; top: 12.9474px; height: auto;" data-block-id="7d2f5247275f740248280bc3f69a83ce"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>NEW: Lambda Destinations for simple flows</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 840.234px; height: 472.632px; left: 199.766px; top: 210.684px; min-width: 1px; min-height: 1px;" data-block-id="df9592920a46684bb0869937e47e5b05"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="960" data-natural-height="540" style="" data-lazy-loaded="" data-src="byte-size-rust/97828dbadc1590f0215aeb30ea562dd8.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 802.105px; left: 477.895px; top: 684px;" data-block-id="3be4dfd3bb74910b440f45eb567afda7"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="https://aws.amazon.com/blogs/compute/introducing-aws-lambda-destinations/" target="_blank">https://aws.amazon.com/blogs/compute/introducing-aws-lambda-destinations/</a></span></pre>
+</div></div></section><section data-id="6dce572f374b6be18c2a06505b805ad6"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 90.7719px; top: 12.9474px; height: auto;" data-block-id="f63e85ca7adf7043830e8cca3f697f64"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>HTTP API Gateway</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 512.849px; height: 451.447px; left: 372.347px; top: 124.553px; min-width: 1px; min-height: 1px;" data-block-id="84a8099b0d1fb85256a8a87d6fc76f0e"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="877" data-natural-height="772" style="" data-lazy-loaded="" data-src="byte-size-rust/1c088e41a9b158940eeea8bdaf934090.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 802.105px; left: 477.895px; top: 684px;" data-block-id="ed7e67e8a423342e06459a055b78da85"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<pre style="text-align:right"><span style="font-size:0.5em"><a href="https://aws.amazon.com/blogs/compute/announcing-http-apis-for-amazon-api-gateway/" target="_blank">https://aws.amazon.com/blogs/compute/announcing-http-apis-for-amazon-api-gateway/</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="line" data-block-id="9d9a41511f01e7d3d4fc52c8b0d88a86" style="width: auto; height: auto; min-width: 0px; min-height: 0px; left: 202.105px; top: 341.355px;"><div class="sl-block-content" data-line-x1="0" data-line-y1="0" data-line-x2="159.2982456140351" data-line-y2="0" data-line-color="#000000" data-line-start-type="none" data-line-end-type="line-arrow" style="z-index: 13;" data-line-width="5px"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="159.2982456140351" height="1" viewbox="0 0 159.2982456140351 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="0.5" y1="0.5" x2="156.0482456140351" y2="0.5"></line><line stroke="#000000" stroke-width="5" x1="0.5" y1="0.5" x2="156.0482456140351" y2="0.5"></line><path style="fill: rgba(0,0,0,0);" stroke="#000000" stroke-width="5" transform="translate(155.5482456140351,0) rotate(90)" d="M 11.25 11.25 L 0 0 L -11.25 11.25"></path></svg></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="191d911c20ed3e6c430739758eb16a3d" style="height: auto; width: 289.825px; left: 57.1925px; top: 288px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p>Cheaper Option</p>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 289.825px; left: 50.1752px; top: 360px;" data-block-id="f0ca13e0e96b76ce24532d1b6a083f0e"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
+<p>Fewer Dials to Set</p>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="67d63d0e6b164108823639d69d2cdcc1" style="height: auto; width: 1065.96px; left: 167.965px; top: 591.482px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 16;">
+<pre><span style="font-size:0.7em"><a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html" target="_blank">https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 154.386px; left: 13.5789px; top: 591.482px;" data-block-id="8eea42581dcccd221cba126bd1003b84"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 17;">
+<p>v1 vs v2:</p>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="1631bbe18e55b03210bee018295fdddd" style="width: 112.705px; height: 131.053px; left: 987.737px; top: 12.9474px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 18;"><img style="" data-natural-width="774" data-natural-height="900" data-lazy-loaded="" data-src="byte-size-rust/0dc77bf4bca26924413e7bb578690e2c.jpg"></div></div></section><section data-id="0ad7ed426382acb11de936fd14c819f5"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 90.7719px; top: 12.9474px; height: auto;" data-block-id="947b38f57399094cf9a6d0522f43764f"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>AWS XRay Tracing</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 560.78px; height: 399.771px; left: 145.245px; top: 320.229px; min-width: 1px; min-height: 1px;" data-block-id="0384588f26a2dcd9ffd75db9e59fe826"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="815" data-natural-height="581" style="" data-lazy-loaded="" data-src="byte-size-rust/f677b3e3a91cbd42db6a9f0ccf49b3bb.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 802.105px; left: 477.895px; top: 684px;" data-block-id="58302f62303ee7cf26553f72bac214d9"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<pre style="text-align:right"><span style="font-size:0.5em"><a href="https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html" target="_blank">https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="bfa6a1bcf5f8ab9b7d7b867c06de57bc" style="width: 1075.2px; height: 228.708px; left: 91.1719px; top: 117.033px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 13;"><img data-natural-width="1180" data-natural-height="251" style="" data-lazy-loaded="" data-src="byte-size-rust/ebcf625548ccd2608dc4f18d653e8b79.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="9035f937cdd619eb17bc1ae619f806fe" style="height: auto; width: 567.719px; left: 706.025px; top: 345.741px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p style="text-align:left">Lots of moving parts!</p>
+
+<p style="text-align:left">Know what's going on!</p>
+
+<p style="text-align:left"> </p>
+
+<p style="text-align:left">Can configure lambda to have xray - just use the SDK to send data</p>
+
+<p style="text-align:left"> </p>
+
+<p style="text-align:left">Or use some non-AWS alternative<br>
+(i.e. Espagon)</p>
+</div></div></section><section data-id="48d7e4eeb550f7354a2894b01c262b7e">
+<div class="sl-block" data-block-type="text" style="width: 1076px; left: 66.1431px; top: 0px; height: auto;" data-block-id="7092ea08996fe8e47127ef7294040665"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Map Reduce in λ</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="8f1644f11272cc0a86fe46971fd3b650" style="width: 498.658px; height: 532.8px; left: 586.602px; top: 115.2px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="1110" data-natural-height="1186" style="" data-lazy-loaded="" data-src="byte-size-rust/a9af4cd26accf802d2b483d3d3e06f21.png"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 288.477px; left: 991.523px; top: 681px;" data-block-id="fa0e753e6f02a8b96adeb4a930e0a6cc"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="http://pywren.io/" target="_blank">http://pywren.io/</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="dd3b75e7cc17665a829dad7a3d9812d9" style="height: auto; width: 392.581px; left: 80px; top: 301.5px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<ul>
+	<li style="text-align: left;">S3 instead of HDFS</li>
+	<li>Lambdas instead of Servers</li>
+</ul>
+</div></div></section><section data-id="aa22f56382cb52ef0826c528b6742255">
+<div class="sl-block" data-block-type="text" style="width: 1076px; left: 110px; top: 0px; height: auto;" data-block-id="f577e2089b431fccfd85d25d54ecf19f"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Big Data with Serverless</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" style="width: 936px; height: 527px; left: 172px; top: 121px; min-width: 1px; min-height: 1px;" data-block-id="bc118bbbbcb930e004e366640ea8bca7"><div class="sl-block-content" style="z-index: 13;"><img data-natural-width="638" data-natural-height="359" style="" data-lazy-loaded="" data-src="byte-size-rust/eed4ce68aa3959df2ba42c4af7a90394.jpg"></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 1258px; left: 19px; top: 684px;" data-block-id="65f5a9c8a35f71e9e483b602d970aa1c"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="https://www.slideshare.net/AmazonWebServices/building-big-data-applications-with-serverless-architectures-june-2017-aws-online-tech-talks" target="_blank">https://www.slideshare.net/AmazonWebServices/building-big-data-applications-with-serverless-architectures-june-2017-aws-online-tech-talks</a></span></pre>
+</div></div></section><section data-id="3bde8945141b97329d7564fb32dbbe45">
+<div class="sl-block" data-block-type="text" style="width: 1076px; left: 110px; top: 0px; height: auto;" data-block-id="c90c6e4fc0fdc26b67fa023d5e756014"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>Big Data on a Budget...</h1>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="1983cdcce5406c5f802d069e2e61c263" style="height: auto; min-width: 30px; min-height: 30px; width: 810px; left: 470px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="https://github.com/awslabs/lambda-refarch-mapreduce" target="_blank">https://github.com/awslabs/lambda-refarch-mapreduce</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="code" data-block-id="5246a4c3118eb86891561e13c6a1e0e9" style="min-width: 30px; min-height: 30px; width: 678px; height: 539px; left: 301px; top: 109px;"><div class="sl-block-content notranslate" data-highlight-theme="monokai" data-code-frame="none" style="z-index: 13;"><pre class="markdown"><code data-line-numbers="">|-----------------------|---------|---------|--------------|
+| Technology            | Scan 1a | Scan 1b | Aggregate 2a | 
+|-----------------------|---------|---------|--------------|
+| Amazon Redshift (HDD) | 2.49    | 2.61    | 25.46        |
+|-----------------------|---------|---------|--------------|
+| Impala - Disk - 1.2.3 | 12.015  | 12.015  | 113.72       |
+|-----------------------|---------|---------|--------------|
+| Impala - Mem - 1.2.3  | 2.17    | 3.01    | 84.35        |
+|-----------------------|---------|---------|--------------|
+| Shark - Disk - 0.8.1  | 6.6     | 7       | 151.4        |
+|-----------------------|---------|---------|--------------|
+| Shark - Mem - 0.8.1   | 1.7     | 1.8     | 83.7         |
+|-----------------------|---------|---------|--------------|
+| Hive - 0.12 YARN      | 50.49   | 59.93   | 730.62       |
+|-----------------------|---------|---------|--------------|
+| Tez - 0.2.0           | 28.22   | 36.35   | 377.48       |
+|-----------------------|---------|---------|--------------|
+| Serverless MapReduce  | 39      | 47      | 200          |   
+|-----------------------|---------|---------|--------------|
+
+Serverless MapReduce Cost:
+
+|---------|---------|--------------|
+| Scan 1a | Scan 1b | Aggregate 2a | 
+|---------|---------|--------------|
+| 0.00477 | 0.0055  | 0.1129       |   
+|---------|---------|--------------|</code></pre></div></div></section><section data-id="7797adf082cc80bc50b8248584c347a9">
+<div class="sl-block" data-block-type="text" style="width: 1194.41px; left: 42.795px; top: 0px; height: auto;" data-block-id="b3ffe44b61e322c7f47931b33deb5d13"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Honeycomb primary storage</h1>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 632.82px; left: 647.18px; top: 684px;" data-block-id="e1fc29ac51ea92995086bf03d8edb454"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="https://www.honeycomb.io/blog/secondary-storage-to-just-storage/" target="_blank">https://www.honeycomb.io/blog/secondary-storage-to-just-storage/</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="ae2e91628950662107ad040104bf4cba" style="width: 629.592px; height: 545.646px; left: 602.342px; top: 122.9px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 12;"><img data-natural-width="1020" data-natural-height="884" style="" data-lazy-loaded="" data-src="byte-size-rust/06a021e3bfd34588fc0c9e382c51c30d.png"></div></div>
+<div class="sl-block" data-block-type="image" data-block-id="0c60ba8d3696691b0837ef6d81a940a1" style="width: 595.529px; height: 386.067px; left: 0px; top: 132.859px; min-width: 1px; min-height: 1px;"><div class="sl-block-content" style="z-index: 13;"><img data-natural-width="2320" data-natural-height="1504" style="" data-lazy-loaded="" data-src="byte-size-rust/49c128cc63d7b599cbb2f225f31cdf4d.png"></div></div></section><section data-id="fe64497f5ee57a2cd2f463adc2cb366b"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 103px; top: 0px; height: auto;" data-block-id="e49d429b4107db32d31a5153911c166b"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 11;">
+<h1>re:Invent 2018 - SRV409</h1>
+
+<p>Lambda Deep Dive</p>
+</div></div>
+<div class="sl-block" data-block-type="iframe" data-block-id="2b4e8ef482e0c501ed90f7c087731cb2" style="min-width: 30px; min-height: 30px; width: 862px; height: 493px; left: 209px; top: 186px;"><div class="sl-block-content" style="z-index: 12;"><iframe webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" sandbox="allow-forms allow-scripts allow-popups allow-same-origin allow-pointer-lock" data-src="https://www.youtube.com/embed/QdzV04T_kec?enablejsapi=1" allow="autoplay"></iframe></div></div></section><section data-id="549fb258bf2b0d0a098c0169e8965ab2"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 103px; top: 0px; height: auto;" data-block-id="c137babf800af7ca198e6af2452308d2"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>More Isn't Always Better</h1>
+</div></div>
+<div class="sl-block" data-block-type="image" data-block-id="b24df595ec4caefc601f7ee0818783e0" style="width: 1075.2px; height: 472.747px; left: 103.8px; top: 157.655px;"><div class="sl-block-content" style="z-index: 11;"><img data-natural-width="2520" data-natural-height="1108" style="" data-src="byte-size-rust/73d139df2ce42d30c24c62dd778b6246.png"></div></div>
+<div class="sl-block" data-block-type="text" data-block-id="6b4b8841e02333f4b4094bb9e8e6f74a" style="height: auto; width: 929.493px; left: 175.254px; top: 105px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12;">
+<p>Figure out the best bang for the buck -- don't guess, use data!</p>
+</div></div>
+<div class="sl-block" data-block-type="text" data-block-id="936a5a28bf54a315a24fec2ce6e32917" style="height: auto; width: 600px; left: 680px; top: 684px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13;">
+<pre style="text-align: right;"><span style="font-size:0.5em"><a href="https://github.com/alexcasalboni/aws-lambda-power-tuning" target="_blank">https://github.com/alexcasalboni/aws-lambda-power-tuning</a></span></pre>
+</div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 1089.95px; left: 71.6959px; top: 624px;" data-block-id="0ecc547b161c18571654e78838edd9f3"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<p>And figure out your POST-free-tier costs before you go too far down this path<br>
+Google: lambda hidden costs</p>
+</div></div></section></section><section data-id="d951fad13cfeaee1e5aa22e9a510327f"><div class="sl-block" data-block-type="text" style="width: 1076px; left: 102px; top: 274px; height: auto;" data-block-id="4306e9d3d26603b44089fbeb3e5c3b8e"><div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text" style="z-index: 10;">
+<h1>Thanks!<br>
+<br>
+Questions?</h1>
+</div></div></section>
+			</div>
+		</div>
+
+		<script>
+			var SLConfig = {"deck": {"id":1622689,"slug":"byte-size-rust","title":"byte-size-rust","description":"","width":1280,"height":720,"margin":0.05,"visibility":"self","published_at":null,"sanitize_messages":null,"thumbnail_url":"https://s3.amazonaws.com/media-p.slid.es/thumbnails/88b85a94740a46161aec62de64229d29/thumb.jpg?1575339847","view_count":0,"user":{"id":1153280,"username":"bacoboy","name":"Steve Hoffman","description":"","thumbnail_url":"https://www.gravatar.com/avatar/480bb1c2a0de12a3621989bebad7e475?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":true,"pro":false,"lite":true,"team_id":null,"settings":{"id":4021246,"present_controls":true,"present_upsizing":true,"present_pointer":true,"present_notes":true,"default_deck_tag_id":null}},"background_transition":"slide","transition":"slide","theme_id":null,"theme_font":"montserrat","theme_color":"white-blue","auto_slide_interval":0,"comments_enabled":true,"forking_enabled":false,"rolling_links":false,"center":false,"shuffle":false,"should_loop":false,"share_notes":false,"slide_number":false,"slide_count":78,"rtl":false,"version":2,"collaborative":null,"deck_user_editor_limit":1,"data_updated_at":1580308889078,"font_typekit":null,"font_google":null,"time_limit":null,"upsizing_enabled":true,"notes":{"740d7d2bc2ec17d6a3bf6bfbcbd63ade":""}}};
+
+
+			// Use local fonts
+			SLConfig.fonts_url = 'lib/fonts/';
+		</script>
+
+		<script src="lib/reveal.min.js"></script>
+		<script src="lib/offline.js"></script>
+
+		<!-- Initialize the presentation -->
+		<script>
+			Reveal.initialize({
+				width: 1280,
+				height: 720,
+				margin: 0.05,
+				
+
+				hash: true,
+				controls: true,
+				progress: true,
+				mouseWheel: false,
+				showNotes: false,
+				slideNumber: false,
+
+				autoSlide: 0,
+				autoSlideStoppable: true,
+
+				center: false,
+				shuffle: false,
+				loop: false,
+				rtl: false,
+
+				transition: "slide",
+				backgroundTransition: "slide",
+
+				highlight: {
+					escapeHTML: false
+				},
+
+				dependencies: [
+					{ src: 'lib/reveal-plugins/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'lib/reveal-plugins/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'lib/reveal-plugins/highlight/highlight.js' },
+					{ src: 'lib/reveal-plugins/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'lib/reveal-plugins/zoom/zoom.js', async: true }
+				]
+			});
+		</script>
+
+		
+
+	</body>
+</html>
