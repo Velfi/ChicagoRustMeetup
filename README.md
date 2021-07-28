@@ -2,6 +2,7 @@
 ## Welcome
 
 ### Presentations
+* [July 27th, 2021 - Rust At Tempus](/presentations/2021_july_27_Rust_At_Tempus.pdf)
 * [February 25, 2020 - Are We Wasm Yet? An Introduction To Rust And WASM](https://docs.google.com/presentation/d/1cX-Q9fABG_cBOIgmuFuRwvQkXq2GhD2DMFvp6RLUivI/edit?usp=sharing)
 * [January 29th, 2020 - Byte Sized Rust - AWS Lambdas & Rust](/presentations/2020_jan_29_Byte_Sized_Rust/index.html)
 * [November 20th, 2019 - Constructing a Repl(like) from scratch](https://docs.google.com/presentation/d/e/2PACX-1vSqYyAli1mdKAGyAMdfUoAHn7MV60gYjiwy1BoNZ_izhf6F2gsjDtztLheuQWOm191vq0zByXvEOhya/pub?start=false&loop=false&delayms=3000)
