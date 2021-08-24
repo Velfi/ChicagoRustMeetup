@@ -18,6 +18,7 @@
 * [October 23rd, 2018 - The Rust Ecosystem: What To Know After "Hello, World!"](/presentations/2018_october_23_The_Rust_Ecosystem/index.html)
 
 ### This Month In Rust
+* [August 25th, 2021](/this_month_in_rust/2021_aug_25.md)
 * [July 27th, 2021](/this_month_in_rust/2021_july_27.md)
 * [February 25th, 2020](/this_month_in_rust/2020_february_25.md)
 * [January 29th, 2020](/this_month_in_rust/2020_january_29.md)
@@ -34,6 +35,7 @@
 * [November 27th, 2018](/this_month_in_rust/2018_november_27.md)
 * [October 23rd, 2018](/this_month_in_rust/2018_october_23.md)
 * [September 25th, 2018](/this_month_in_rust/2018_september_25.md)
+
 
 ### Lightning Talks
 * [Rust Editions](/lightning_talks/rust_editions/index.html)
